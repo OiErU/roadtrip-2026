@@ -292,16 +292,23 @@ const DAYS=[
     wl:"https://www.wikiloc.com/hiking-trails/refuxio-de-verdes-verdes-186638666",mq:"Refuxio de Verdes, Coristanco"},
    {name:"Fervenza de San Paio",photo:"sanpaio",km:2.0,gain:113,type:"Loop",time:"~40 min",
     text:"Short loop around the Entrecruces waterfall. Most of the climb comes in one short section, so go slowly with the older dogs.",
-    wl:"https://es.wikiloc.com/rutas-senderismo/ruta-fervenza-entrecruces-66054167",mq:"Fervenza de San Paio, Entrecruces, Carballo"}],
+    wl:"https://es.wikiloc.com/rutas-senderismo/ruta-fervenza-entrecruces-66054167",mq:"Fervenza de San Paio, Entrecruces, Carballo"},
+   {name:"Fragas do Mandeo · Zarzo–Chelo",opt:"Optional swap",scene:"oakriver",seed:53,km:10.5,gain:null,type:"Loop",time:"~3 h 30",
+    text:"Riverside Atlantic forest along the Mandeo in the Mariñas–Mandeo Biosphere Reserve, past the Presa da Cabra weir, with roe deer and otters about. The full loop is 10.5 km. If everyone feels fresh, do it instead of Verdes + San Paio, or walk part of it from Chelo and turn back. About 45 min from camp, and it makes Sunday a long day right before the Eume, so only if the dogs are flying.",
+    src:"https://blog.turismo.gal/?p=14090",srcLabel:"Route description",mq:"Ponte de Chelo, Coirós"}],
   notes:[["surf","Surf slot A","Razo and Baldaio are right by the campsite. If the school prefers mornings, swap the two walks to the afternoon. Sunset is about 18:05."]],
   sleep:NEVEDAS,night:"Night 3 of 5"},
  {date:"2026-11-23",n:4,base:"gal",cover:{photo:"eumeValley"},title:"Fragas do Eume",lede:"The deep Atlantic forest, and the reason for the Galicia week. It's a Monday, so parking should be quiet.",
   drive:"Camp → Fragas do Eume (Pontedeume side) about 1 h each way. Outside summer you can drive to the Santa Cristina bridge near Caaveiro.",
-  timeline:[["09:00","Leave camp"],["10:00","Start walking"],["~12:30","Lunch at San Xoán de Caaveiro monastery"],["~15:00","Walk back. Leave the forest by 16:30 so you drive back in daylight."]],
+  timeline:[["09:00","Leave camp"],["10:00","Start walking"],["~12:30","Lunch at San Xoán de Caaveiro monastery"],["~15:00","Walk back. Leave the forest by 16:30 so you drive back in daylight."],["","Did the short version? Add the Fervenza do Belelle on the way back (about 1 h)."]],
   hikes:[{name:"Camiño dos Encomendeiros",photo:"eume",km:11.8,gain:110,type:"Circuit",time:"~4 h",
     text:"Full version: the Wikiloc circuit from the Cal Grande suspension bridge to Caaveiro, about 6 km in the morning and 6 km in the afternoon with a long lunch between. Short version for tired legs: park at Santa Cristina bridge and walk to the monastery and along the river, 4–6 km out and back.",
     wl:"https://pt.wikiloc.com/trilhas-trekking/p-nat-fragas-do-eume-camino-dos-encomendeiros-do-ponte-colgante-de-cal-grande-ao-mosteiro-de-san-xo-73382233",mq:"Ponte de Santa Cristina, Caaveiro, Fragas do Eume",
-    warn:[["Route status (Xunta)","https://patrimonionatural.xunta.gal/es/node/46"],["Rope section & tips","https://blog.mundo-r.com/rutas-fragas-do-eume/"]]}],
+    warn:[["Route status (Xunta)","https://patrimonionatural.xunta.gal/es/node/46"],["Rope section & tips","https://blog.mundo-r.com/rutas-fragas-do-eume/"]]},
+   {name:"Fervenza do Belelle · Neda",opt:"Add-on with the short Eume",scene:"falls",seed:41,km:4,gain:null,type:"Out & back",time:"~1 h",
+    text:"A waterfall of more than 40 m in the woods, 15–20 min from the Eume. Park at the end of the narrow road by the small power station and follow the path along the stone water channel to the foot of the falls, about 4 km there and back. Skip the steep path up to the wooden viewpoint.",
+    src:"https://blog.turismo.gal/the-belelle-waterfall/",srcLabel:"Route description",mq:"Fervenza do Belelle, Neda",
+    warn:[["Roots & slippery pools","https://blog.turismo.gal/the-belelle-waterfall/"]]}],
   notes:[["warn","Not with the dogs: the rope section","Walkers report a slippery rocky mound and a mud-and-stone stretch where a rope is used. That isn't dog terrain. Its exact position isn't documented, so treat it as your turnaround: if you reach the rope, go back the way you came. The short version (Santa Cristina bridge → Caaveiro → along the river and back) is the safest choice. The route has also had temporary closures in past years, so check the Xunta page or the Centro de Interpretación the day before."],["moss","Dog plan","This is the longest day of the trip. Decide the full or short version at the lunch stop based on the older two."]],
   sleep:NEVEDAS,night:"Night 4 of 5"},
  {date:"2026-11-24",n:5,base:"gal",title:"Recovery & Ézaro",lede:"An easy day after the Eume. Surf in the morning if the forecast is good, then the waterfall that drops to the sea.",
@@ -310,13 +317,20 @@ const DAYS=[
   hikes:[{name:"Fervenza do Ézaro",scene:"falls",seed:11,km:0.9,gain:0,type:"Walkway",time:"~30 min",
     text:"Stone steps beside the power plant, then a wooden walkway to the foot of the falls. Flow depends on dam releases. After heavy rain it's spectacular, and in dry spells it can be a trickle.",
     wl:"https://www.wikiloc.com/walking-trails/fervenza-rio-ezaro-78644575",mq:"Fervenza do Ézaro",
-    warn:[["Access & flow","https://visitacostadamorte.com/en/post/cascada-del-ezaro"]]}],
+    warn:[["Access & flow","https://visitacostadamorte.com/en/post/cascada-del-ezaro"]]},
+   {name:"Fraga de Cecebre · Mero river",opt:"Closer option",scene:"oakriver",seed:47,km:4,gain:null,type:"Out & back",time:"~1 h 30",
+    text:"The forest that inspired 'El bosque animado', about 30–35 min from camp instead of 1 h 20. Be aware that only a small part of the old forest remains: it isn't a marked trail, the paths alternate between dirt and paving, and there's eucalyptus around. Walk from the Cecebre station area along the Mero river and the old mills, and turn back whenever you like. Choose it over Ézaro if you'd rather drive less after the Eume.",
+    wl:"https://www.wikiloc.com/mountain-biking-trails/senda-fluvial-rio-mero-a-barcala-cecebre-pazo-de-orto-34585033",wlLabel:"Mero river path (Wikiloc)",mq:"Apeadeiro de Cecebre, Cambre"}],
   notes:[["warn","Route filter","Ignore Wikiloc routes that climb Monte Pindo or A Moa. They are steep and rocky granite, not dog terrain."],["surf","Surf slot B","Book the session on whichever day (Sun or Tue) has the better forecast. This is the easiest day to skip if you'd rather rest everyone."]],
   sleep:NEVEDAS,night:"Night 5 of 5"},
- {date:"2026-11-25",n:6,base:"road",title:"Redwoods on the way",lede:"Pack down, stop at Poio's sequoias halfway, and reach the mountains with daylight to spare.",
-  drive:"As Nevedas → Poio about 1 h 20 · Poio → Melgaço about 1 h 20 · Melgaço → Lamas de Mouro about 25 min. You gain an hour at the border.",
-  timeline:[["08:30","Pack down. Dry the tent fly as much as possible."],["10:30","Leave camp (Spanish time)"],["~12:00","Bosque de Colón walk + lunch"],["~13:00","Leave Poio (Portuguese time from here)"],["~14:20","Shop at Intermarché Melgaço"],["~15:00","Pitch at Lamas de Mouro. It's dark around 17:05."]],
-  hikes:[{name:"Bosque de Colón · Poio",photo:"colon",km:1.1,gain:29,type:"Loop",time:"~30 min",
+ {date:"2026-11-25",n:6,base:"road",title:"Mills & redwoods on the way",lede:"Pack down, then two short forest stops near Pontevedra (Barosa's waterfall and mills, then Poio's sequoias), and reach the mountains with daylight to spare.",
+  drive:"As Nevedas → Barro (Río Barosa) about 1 h 15 · Barosa → Poio about 15 min · Poio → Melgaço about 1 h 20 · Melgaço → Lamas de Mouro about 25 min. You gain an hour at the border.",
+  timeline:[["08:30","Pack down. Dry the tent fly as much as possible."],["10:30","Leave camp (Spanish time)"],["~11:45","Río Barosa: mills and the 30 m waterfall"],["~13:00","Bosque de Colón walk + lunch (15 min away)"],["~13:00","Leave Poio (Portuguese time from here; 14:00 Spanish)"],["~14:20","Shop at Intermarché Melgaço"],["~15:15","Pitch at Lamas de Mouro. It's dark around 17:05."]],
+  hikes:[{name:"Río Barosa · mills & waterfall",scene:"falls",seed:43,km:2.1,gain:null,type:"Near-loop",time:"<1 h",
+    text:"The PR-G 105 path past up to 17 water mills, footbridges and oaks, with the Barosa waterfall dropping about 30 m near the start. The stretch towards the Muíños de Abaixo recreation area is steep, so take it slowly with the older two.",
+    src:"https://www.escapadarural.com/blog/sendero-de-los-molinos-del-rio-barosa/",srcLabel:"Route description",mq:"Parque Natural Río Barosa, Barro",
+    warn:[["Steep section","https://www.escapadarural.com/blog/sendero-de-los-molinos-del-rio-barosa/"]]},
+   {name:"Bosque de Colón · Poio",photo:"colon",km:1.1,gain:29,type:"Loop",time:"~30 min",
     text:"Short loop through the Poio sequoias and the Castro recreation area. Exactly the leg-stretch four dogs need halfway through a transfer.",
     wl:"https://es.wikiloc.com/rutas-a-pie/bosque-de-colon-e-area-recreativa-do-castro-192429920",mq:"Bosque de Colón, Poio"}],
   notes:[["moss","Higher camp, colder nights","Lamas de Mouro sits at about 900 m. Expect frost. Ask for an electric pitch on arrival (see Info → Power & cold nights)."]],
@@ -364,6 +378,10 @@ const CHOICES=[
  ["new","PR9 Lamas de Mouro","Added. Starts next to the campsite: 4.4 km, 135 m, no driving."],
  ["new","PR4 Castro Laboreiro","Added. Oak grove and castle valley, 5.2 km, 15 min from camp."],
  ["new","Santuário da Peneda","Added as a flat afternoon visit."],
+ ["new","Río Barosa (Barro)","Added to the transfer day before Bosque de Colón: 2.1 km of mills, oaks and a 30 m waterfall, 15 min from Poio."],
+ ["new","Fervenza do Belelle (Neda)","Added as an add-on to Monday if you do the short Eume version: a 40 m+ waterfall, about 4 km there and back."],
+ ["opt","Fraga de Cecebre (Cambre)","Optional on Tuesday instead of Ézaro, if you'd rather drive less. Only a small part of the old forest is left, so keep expectations modest."],
+ ["opt","Fragas do Mandeo (Zarzo–Chelo)","Optional swap for Sunday if the dogs are full of energy: a 10.5 km riverside forest loop, or part of it from Chelo."],
  ["opt","Lagoas de Travanca (Mezio)","Optional swap for Saturday. It's a good walk (5.1 km, 149 m), but it's high plateau and lagoons rather than forest, and about 1 h 15 from Lamas."]
 ];
 const LISTS=[
@@ -424,7 +442,7 @@ function todayISO(){try{return new Intl.DateTimeFormat("en-CA",{timeZone:"Europe
 const T=todayISO(), START="2026-11-20", END="2026-11-29";
 const diff=(a,b)=>Math.round((Date.parse(b)-Date.parse(a))/864e5);
 const fd=iso=>{const d=new Date(iso+"T12:00:00Z");return{d:d.getUTCDate(),w:d.toLocaleDateString("en-GB",{weekday:"short",timeZone:"UTC"}),W:d.toLocaleDateString("en-GB",{weekday:"long",timeZone:"UTC"})}};
-const kmOf=d=>d.hikes.reduce((a,h)=>a+h.km,0);
+const kmOf=d=>d.hikes.filter(h=>!h.opt).reduce((a,h)=>a+h.km,0);
 const TOTAL=DAYS.reduce((a,d)=>a+kmOf(d),0);
 
 /* ================= Painted scenes ================= */
@@ -502,12 +520,12 @@ const baseLabel=b=>b==="gal"?"Galicia":b==="pen"?"Peneda-Gerês":"Road day";
 function hikeHTML(h){
   const links=[];
   if(h.wl)links.push(`<a class="btn wl" href="${h.wl}" target="_blank" rel="noopener">${esc(h.wlLabel||"Wikiloc")} ↗</a>`);
-  if(h.src)links.push(`<a class="btn wl" href="${h.src}" target="_blank" rel="noopener">Official route sheet ↗</a>`);
+  if(h.src)links.push(`<a class="btn wl" href="${h.src}" target="_blank" rel="noopener">${esc(h.srcLabel||"Official route sheet")} ↗</a>`);
   (h.warn||[]).forEach(([t,u])=>links.push(`<a class="btn wn" href="${u}" target="_blank" rel="noopener">⚠ ${esc(t)} ↗</a>`));
   links.push(`<a class="btn map" href="${maps(h.mq)}" target="_blank" rel="noopener">Trailhead ↗</a>`);
-  return `<article class="hike"><div class="media">${imgFor(h)}</div><div class="hike-body">
+  return `<article class="hike"><div class="media">${imgFor(h)}${h.opt?`<span class="badge">${esc(h.opt)}</span>`:""}</div><div class="hike-body">
    <h4>${esc(h.name)}</h4>
-   <div class="stats"><div><b>${h.km}</b><small>km</small></div><div><b>${h.gain===null?"Low":h.gain}</b><small>${h.gain===null?"climb":"m climb"}</small></div><div><b class="sm">${esc(h.time)}</b><small>time</small></div><div><b class="sm">${esc(h.type)}</b><small>type</small></div></div>
+   <div class="stats"><div><b>${h.km}</b><small>km</small></div><div><b>${h.gain===null?"–":h.gain}</b><small>${h.gain===null?"climb":"m climb"}</small></div><div><b class="sm">${esc(h.time)}</b><small>time</small></div><div><b class="sm">${esc(h.type)}</b><small>type</small></div></div>
    <p>${esc(h.text)}</p><div class="btns">${links.join("")}</div></div></article>`;
 }
 
@@ -526,7 +544,8 @@ function dayDetail(d,opts={}){
   <p class="lede">${esc(d.lede)}</p>
   <div class="drive">${IC.car}<div><b>Driving</b>${esc(d.drive)}</div></div>
   <div class="block"><div class="eyebrow">The day</div><ul class="tl">${tl}</ul></div>
-  ${d.hikes.length?`<div class="block"><div class="eyebrow">${d.hikes.length>1?"The walks":"The walk"}</div>${d.hikes.map(hikeHTML).join("")}</div>`:""}
+  ${d.hikes.length?`<div class="block"><div class="eyebrow">${d.hikes.filter(h=>!h.opt).length>1?"The walks":"The walk"}</div>${d.hikes.filter(h=>!h.opt).map(hikeHTML).join("")}</div>`:""}
+  ${d.hikes.some(h=>h.opt)?`<div class="block"><div class="eyebrow">Options</div>${d.hikes.filter(h=>h.opt).map(hikeHTML).join("")}</div>`:""}
   ${d.notes.map(([k,t,s])=>`<div class="note ${k}"><b>${esc(t)}</b>${esc(s)}</div>`).join("")}
   ${d.sleep?`<div class="sleep">${IC.tent}<span>Sleep · <a href="${maps(d.sleep.q)}" target="_blank" rel="noopener">${esc(d.sleep.name)}</a> · ${esc(d.night)}</span></div>`:`<div class="sleep">${IC.home}<span>${esc(d.night)}</span></div>`}`;
 }
@@ -534,7 +553,7 @@ function dayDetail(d,opts={}){
 function rowHTML(d){
   const f=fd(d.date), km=kmOf(d), c=coverOf(d);
   return `<a class="row${d.date===T?" is-today":""}" href="#day${d.n}"><span class="thumb">${imgFor(c)}</span>
-   <span class="row-main"><span class="eyebrow">${f.w} ${f.d} · Day ${d.n}</span><h4>${esc(d.title)}</h4><p>${esc(d.hikes.map(h=>h.name.split(" · ")[0]).join(" + ")||"Drive day")}</p></span>
+   <span class="row-main"><span class="eyebrow">${f.w} ${f.d} · Day ${d.n}</span><h4>${esc(d.title)}</h4><p>${esc(d.hikes.filter(h=>!h.opt).map(h=>h.name.split(" · ")[0]).join(" + ")||"Drive day")}</p></span>
    <span class="row-km"><b>${km?km.toFixed(1):"–"}</b><span>${km?"km":""}</span></span></a>`;
 }
 
