@@ -333,6 +333,15 @@ th{font-size:13px;color:var(--muted)}
 </nav></div>
 <script src="data.js"></script>
 <script src="app.js"></script>
-<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
+<script>
+/* Offline support + automatic updates: check for a new version on open and whenever the app comes back to the foreground, then reload once. */
+if("serviceWorker" in navigator){
+  const had=!!navigator.serviceWorker.controller;let reloaded=false;
+  navigator.serviceWorker.addEventListener("controllerchange",()=>{if(had&&!reloaded){reloaded=true;location.reload()}});
+  window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(reg=>{
+    document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")reg.update().catch(()=>{})});
+  }).catch(()=>{}));
+}
+</script>
 </body>
 </html>
