@@ -100,6 +100,7 @@ const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(checks))}catch(e){}}
 const doneOf=l=>l.items.filter((_,i)=>checks[l.id+":"+i]).length;
 
 /* ================= Header ================= */
+let INTRO="";
 function renderTop(view){
   const top=$("#top");
   if(view!=="today"){top.className="bar";top.innerHTML=`<div class="wrap"><i class="wm" aria-hidden="true"></i><span>Forests &amp; Waterfalls</span><span>20–29 Nov</span></div>`;return}
@@ -110,9 +111,10 @@ function renderTop(view){
   const c=CREDITS[photo];
   top.className="hero";
   top.innerHTML=`<img src="${img(photo)}" alt="">${c?`<a class="credit" href="${c[2]}" target="_blank" rel="noopener">Photo: ${esc(c[0])}</a>`:""}
-   <div class="wrap"><h1><span>Forests &amp;</span><span>Waterfalls</span></h1>
-   <div class="route"><span>Óbidos</span><i class="wm"></i><span>Costa da Morte</span><i class="wm"></i><span>Peneda-Gerês</span><i class="wm"></i><span>Óbidos</span></div>
-   <p class="when">${line}</p></div>`;
+   <div class="wrap"><h1><span>Forests &amp;</span><span>Waterfalls</span></h1></div>`;
+  INTRO=`<div class="intro"><p class="when">${line}</p>
+   <div class="route"><span>Óbidos</span><i class="wm"></i><span>Costa da Morte</span><i class="wm"></i><span>Peneda-Gerês</span><i class="wm"></i><span>Óbidos</span></div></div>`;
+  const v=$("#v-today"),old=v.querySelector(".intro");if(old)old.outerHTML=INTRO;else v.insertAdjacentHTML("afterbegin",INTRO);
 }
 
 /* ================= Day page ================= */
@@ -141,7 +143,7 @@ function dayDetail(d,opts={}){
     <a class="chipnav" href="#day${next?next.n:d.n}" ${next?"":'aria-disabled="true"'}>${next?"Day "+next.n:"End"}${IC.r}</a></div>`;
   const main=d.hikes.map((h,k)=>[h,k]).filter(([h])=>!h.opt), opt=d.hikes.map((h,k)=>[h,k]).filter(([h])=>h.opt);
   const bcls=d.base==="gal"?"gal":d.base==="pen"?"pen":"road";
-  return `<div class="dayhero"><img src="${img(cov)}" alt="">${nav}
+  return `<div class="dayhero${opts.nav===false?" compact":""}"><img src="${img(cov)}" alt="">${nav}
     <div class="in"><span class="when">${d.date===T?'<i class="wm"></i>Today, ':""}${f.W} ${f.d} November · Day ${d.n} of 10</span><h2>${esc(d.title)}</h2></div></div>
   <div class="facts-row"><span class="fact ${bcls}">${baseLabel(d.base)}</span>${km?`<span class="fact">${km.toFixed(1)} km walking</span>`:""}${d.notes.some(n=>n[0]==="surf")?'<span class="fact">Surf slot</span>':""}</div>
   <p class="lede">${esc(d.lede)}</p>
@@ -215,7 +217,7 @@ function renderToday(){
     h=`<div class="sec-head"><h2 class="title">Welcome home</h2><p class="sub">The after-trip list keeps the gear ready for next time.</p></div>${progBlock(LISTS.find(l=>l.id==="after"),"After the trip")}
      <div class="btns"><a class="btn" href="#plan">Look back at the plan</a></div>`;
   }
-  $("#v-today").innerHTML=h;
+  $("#v-today").innerHTML=INTRO+h;
 }
 
 /* ================= Map ================= */

@@ -1,6 +1,6 @@
 // Offline support: app, photos and map library cached on install; the page itself refreshes from the network when online.
 // Map tiles are cached as you view them, so areas you've looked at online also work offline.
-const CACHE="forests-2026-v5", TILES="forests-tiles-v1";
+const CACHE="forests-2026-v6", TILES="forests-tiles-v1";
 const SHELL=["./","index.html","app.js","data.js","manifest.webmanifest","icon-180.png","icon-192.png","icon-512.png",
  "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js","https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css",
  "img/albergaria.jpg","img/barosa.jpg","img/belelle.jpg","img/bucaco.jpg","img/castro.jpg","img/cecebre.jpg","img/colon.jpg","img/eume.jpg","img/eumeRiver.jpg","img/ezaro.jpg","img/laboreiro.jpg","img/lamas.jpg","img/mandeo.jpg","img/peneda.jpg","img/razo.jpg","img/sanpaio.jpg","img/t/albergaria.jpg","img/t/barosa.jpg","img/t/belelle.jpg","img/t/bucaco.jpg","img/t/castro.jpg","img/t/cecebre.jpg","img/t/colon.jpg","img/t/eume.jpg","img/t/eumeRiver.jpg","img/t/ezaro.jpg","img/t/laboreiro.jpg","img/t/lamas.jpg","img/t/mandeo.jpg","img/t/peneda.jpg","img/t/razo.jpg","img/t/sanpaio.jpg","img/t/verdes.jpg","img/verdes.jpg"];
