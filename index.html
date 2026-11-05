@@ -165,6 +165,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{o
 .note b{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--moss)}
 .note.warn{background:var(--warn-bg)} .note.warn b{color:var(--warn)}
 .note.surf{background:var(--river-bg)} .note.surf b{color:var(--river)}
+.note.shop{background:var(--brass-bg)} .note.shop b{color:var(--brass)}
 .sleep{display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:var(--r-s);background:var(--brass-bg);font-size:14.5px}
 .sleep svg{width:22px;height:22px;stroke:var(--brass);fill:none;stroke-width:1.7;flex:none}
 .sleep a{color:var(--ink);font-weight:700}
@@ -282,7 +283,7 @@ const DAYS=[
   hikes:[{name:"Rego dos Muiños & Castro de Borneiro",scene:"castro",seed:5,km:7.9,gain:207,type:"Out & back",time:"~3 h",
     text:"Stream, moss and stone mills on the way out, then the castro at about km 3.9. The natural split is lunch at the castro, then walking back the same way.",
     wl:"https://es.wikiloc.com/rutas-senderismo/ruta-do-rego-dos-muinos-castro-de-borneiro-223630672",mq:"Castro de Borneiro, Cabana de Bergantiños"}],
-  notes:[],sleep:NEVEDAS,night:"Night 2 of 5"},
+  notes:[["shop","Rainy afternoon?","Both El Corte Inglés outlets are about 30–35 min from camp, open Monday to Saturday. Spanish shops close on Sunday, so Saturday or Tuesday are the days. See Info → Outlet shopping."]],sleep:NEVEDAS,night:"Night 2 of 5"},
  {date:"2026-11-22",n:3,base:"gal",title:"Waterfall & mill woods",lede:"Two short, gentle walks close to camp. A low-load day before the Eume, and the first possible surf slot.",
   drive:"Local only · 20–30 min from camp to each trailhead.",
   timeline:[["10:00","Refuxio de Verdes loop"],["~12:30","Lunch, then Fervenza de San Paio (Entrecruces)"],["15:00","Possible bodyboard slot at Razo. Silvana and the dogs walk the dunes."]],
@@ -321,7 +322,7 @@ const DAYS=[
    {name:"Fraga de Cecebre · Mero river",opt:"Closer option",scene:"oakriver",seed:47,km:4,gain:null,type:"Out & back",time:"~1 h 30",
     text:"The forest that inspired 'El bosque animado', about 30–35 min from camp instead of 1 h 20. Be aware that only a small part of the old forest remains: it isn't a marked trail, the paths alternate between dirt and paving, and there's eucalyptus around. Walk from the Cecebre station area along the Mero river and the old mills, and turn back whenever you like. Choose it over Ézaro if you'd rather drive less after the Eume.",
     wl:"https://www.wikiloc.com/mountain-biking-trails/senda-fluvial-rio-mero-a-barcala-cecebre-pazo-de-orto-34585033",wlLabel:"Mero river path (Wikiloc)",mq:"Apeadeiro de Cecebre, Cambre"}],
-  notes:[["warn","Route filter","Ignore Wikiloc routes that climb Monte Pindo or A Moa. They are steep and rocky granite, not dog terrain."],["surf","Surf slot B","Book the session on whichever day (Sun or Tue) has the better forecast. This is the easiest day to skip if you'd rather rest everyone."]],
+  notes:[["warn","Route filter","Ignore Wikiloc routes that climb Monte Pindo or A Moa. They are steep and rocky granite, not dog terrain."],["surf","Surf slot B","Book the session on whichever day (Sun or Tue) has the better forecast. This is the easiest day to skip if you'd rather rest everyone."],["shop","Outlet stop","If you choose Cecebre, El Corte Inglés Outlet Altamira is in the same municipality (Cambre), a few minutes away. Details in Info → Outlet shopping."]],
   sleep:NEVEDAS,night:"Night 5 of 5"},
  {date:"2026-11-25",n:6,base:"road",title:"Mills & redwoods on the way",lede:"Pack down, then two short forest stops near Pontevedra (Barosa's waterfall and mills, then Poio's sequoias), and reach the mountains with daylight to spare.",
   drive:"As Nevedas → Barro (Río Barosa) about 1 h 15 · Barosa → Poio about 15 min · Poio → Melgaço about 1 h 20 · Melgaço → Lamas de Mouro about 25 min. You gain an hour at the border.",
@@ -382,6 +383,7 @@ const CHOICES=[
  ["new","Fervenza do Belelle (Neda)","Added as an add-on to Monday if you do the short Eume version: a 40 m+ waterfall, about 4 km there and back."],
  ["opt","Fraga de Cecebre (Cambre)","Optional on Tuesday instead of Ézaro, if you'd rather drive less. Only a small part of the old forest is left, so keep expectations modest."],
  ["opt","Fragas do Mandeo (Zarzo–Chelo)","Optional swap for Sunday if the dogs are full of energy: a 10.5 km riverside forest loop, or part of it from Chelo."],
+ ["opt","El Corte Inglés outlets","Altamira (Cambre) or A Coruña city, on Saturday or Tuesday. Altamira pairs with the Cecebre option."],
  ["opt","Lagoas de Travanca (Mezio)","Optional swap for Saturday. It's a good walk (5.1 km, 149 m), but it's high plateau and lagoons rather than forest, and about 1 h 15 from Lamas."]
 ];
 const LISTS=[
@@ -651,6 +653,14 @@ function renderInfo(){
   <div class="cards">
    <div class="card"><h3>Hook-up</h3><ul class="tight"><li>Ask both campsites for an electric pitch and <b>how many amps</b>.</li><li>Rough total for the whole pitch: <span class="mono">6 A ≈ 1,380 W · 10 A ≈ 2,300 W · 16 A ≈ 3,680 W</span>.</li><li>Blue CEE 17 cable, 25 m, fully unrolled when in use. A coiled cable heats up.</li><li>Socket box with RCD. Keep connections off wet ground.</li></ul></div>
    <div class="card"><h3>At 900 m in November</h3><ul class="tight"><li>Lift the dogs' beds off the tent floor with insulated mats. Coats for the older two at night.</li><li>Leave a vent open to cut condensation. Wipe the inner each morning.</li><li>Keep drinking water inside so it doesn't freeze. Drive slowly on frosty mornings.</li></ul></div>
+  </div>
+  <div class="head"><span class="eyebrow">Gear deals</span><h2>Outlet shopping</h2><p>El Corte Inglés outlets near the Galicia base. Spanish shops close on Sunday, so go on Saturday 21 or Tuesday 24.</p></div>
+  <div class="cards">
+   <div class="card"><span class="eyebrow">Cambre · pairs with Cecebre</span><h3>Outlet Altamira</h3><p>Ctra. A Coruña–Santiago, km 14.6, 15181 Altamira (Cambre). Clothing and other brands at up to 70% off. Roughly 30–35 min from As Nevedas.</p>
+    <div class="btns"><a class="phone" href="tel:+34981189400"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3.5h3.5l1.8 4.6-2.3 1.4a11 11 0 006 6l1.4-2.3 4.6 1.8V18.5A2 2 0 0118 20.5 15.5 15.5 0 013.5 6 2 2 0 015 3.5z"/></svg>981 189 400</a></div>
+    <div class="btns"><a class="btn map" href="${maps("El Corte Inglés Outlet Altamira Cambre")}" target="_blank" rel="noopener">Directions ↗</a><a class="btn" href="https://www.elcorteingles.es/centroscomerciales/es/outlet/centros/outlet-altamira" target="_blank" rel="noopener">Store page ↗</a></div></div>
+   <div class="card"><span class="eyebrow">A Coruña city</span><h3>Outlet A Coruña</h3><p>Ctra. de Baños de Arteixo 43 (Riazor area). Mon–Sat 10:00–22:00, closed Sunday. Roughly 30 min from As Nevedas. Hours come from a store directory, so check before you go.</p>
+    <div class="btns"><a class="btn map" href="${maps("El Corte Inglés Outlet Carretera de Baños de Arteixo 43 A Coruña")}" target="_blank" rel="noopener">Directions ↗</a></div></div>
   </div>
   <div class="head"><span class="eyebrow">Light</span><h2>Daylight</h2><p>Walks are planned to finish by about 16:30.</p></div>
   <div class="panel"><div class="tbl"><table><thead><tr><th>Place</th><th>Date</th><th>Sunrise</th><th>Sunset</th><th>Last light</th></tr></thead><tbody>
