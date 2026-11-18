@@ -154,10 +154,12 @@ function dayDetail(d,opts={}){
   ${d.extra?`<div class="stack"><h3 class="h3">Also today</h3>${d.extra.map(extraHTML).join("")}</div>`:""}
   ${opt.length?`<div class="stack"><h3 class="h3">If you want to swap</h3>${opt.map(([h,k])=>hikeHTML(h,d,k)).join("")}</div>`:""}
   ${d.notes.map(([k,t,s])=>`<div class="note ${k}">${noteIcon(k)}<b>${esc(t)}</b><span>${esc(s)}</span></div>`).join("")}
-  ${d.shops?`<div class="stack"><h3 class="h3">Outlet stop, optional</h3><div class="note shop">${noteIcon()}<b>Gear deals</b><span>${esc(d.shops.intro)}</span></div><div class="cards">${d.shops.list.map(outletCard).join("")}</div></div>`:""}
+  ${d.shops?`<div class="stack"><h3 class="h3">Outlet stop, optional</h3><div class="note shop">${noteIcon()}<b>Gear deals</b><span>${esc(d.shops.intro)}</span></div><div class="cards">${d.shops.list.map(k=>outletCard(k)).join("")}</div></div>`:""}
+  ${d.soak?`<div class="stack"><h3 class="h3">Hot springs, optional</h3><div class="note">${noteIcon()}<b>Warm water</b><span>${esc(d.soak.intro)}</span></div><div class="cards">${d.soak.list.map(soakCard).join("")}</div></div>`:""}
   ${d.sleep?`<div class="sleep">${IC.tent}<span><small>${esc(d.night)}</small><a href="${maps(d.sleep.q)}" target="_blank" rel="noopener">${esc(d.sleep.name)}</a></span></div>`:`<div class="sleep">${IC.home}<span><small>Night 10</small>${esc(d.night)}</span></div>`}`;
 }
-function outletCard(k){const o=OUTLETS[k];return `<div class="card"><span class="k">${esc(o.tag)}</span><h3 class="h3">${esc(o.name)}</h3><p>${esc(o.addr)}</p><p style="color:var(--muted);font-size:15px">${esc(o.info)}</p>
+function soakCard(k){return outletCard(k,SOAKS)}
+function outletCard(k,src){const o=(src||OUTLETS)[k];return `<div class="card"><span class="k">${esc(o.tag)}</span><h3 class="h3">${esc(o.name)}</h3><p>${esc(o.addr)}</p><p style="color:var(--muted);font-size:15px">${esc(o.info)}</p>
   <div class="btns">${o.tel?tel(o.tel[1],o.tel[0]):""}${ext(maps(o.q),"Directions")}${o.page?ext(o.page,"Store page"):""}</div></div>`}
 
 /* ================= Plan ================= */
@@ -255,6 +257,7 @@ async function initMap(){
     };
     d.hikes.forEach((h,i)=>add(h,`h-${d.n}-${i}`,!!h.opt));
     (d.extra||[]).forEach((x,i)=>add(x,`x-${d.n}-${i}`,false));
+    (d.soak?d.soak.list:[]).forEach((k,i)=>{const o=SOAKS[k];add({name:o.name,ll:o.ll,mq:o.q},`s-${d.n}-${i}`,true)});
   });
   PLACES.forEach(([k,name,ll,q,note])=>{
     const icon=k==="vet"?divPin("vet","+",28):divPin("dot "+k,"",18);
