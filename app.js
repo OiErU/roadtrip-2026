@@ -97,7 +97,12 @@ function wxStrip(days){
 const KEY="fw2026-checks";
 let checks={};try{checks=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){checks={}}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(checks))}catch(e){}};
-const doneOf=l=>l.items.filter((_,i)=>checks[l.id+":"+i]).length;
+/* Ticks are stored by item name, so reordering a list keeps them. Older ticks were stored by position: move those once. */
+const tickKey=(l,t)=>l.id+":"+t;
+(()=>{const old=Object.keys(checks).filter(k=>/^[a-z0-9]+:\d+$/.test(k));if(!old.length)return;
+  LISTS.forEach(l=>l.items.forEach((it,i)=>{const from=it[2]||(l.keep?l.id+":"+i:"");if(from&&checks[from])checks[tickKey(l,it[0])]=1}));
+  old.forEach(k=>delete checks[k]);save()})();
+const doneOf=l=>l.items.filter(([t])=>checks[tickKey(l,t)]).length;
 
 /* ================= Header ================= */
 let INTRO="";
@@ -286,7 +291,7 @@ async function showMap(arg){
 function listHTML(l){
   const done=doneOf(l);
   return `<details class="list" id="list-${l.id}"><summary><span class="lt">${esc(l.title)}</span><span class="count">${done}/${l.items.length}</span><span class="ls">${esc(l.sub)}</span><span class="meter"><i style="width:${100*done/l.items.length}%"></i></span></summary>
-   <div class="items">${l.items.map(([t,s],i)=>`<label class="item" for="c-${l.id}-${i}"><input type="checkbox" id="c-${l.id}-${i}" data-key="${l.id}:${i}"${checks[l.id+":"+i]?" checked":""}><span>${esc(t)}${s?`<small>${esc(s)}</small>`:""}</span></label>`).join("")}</div>
+   <div class="items">${l.items.map(([t,s],i)=>`<label class="item" for="c-${l.id}-${i}"><input type="checkbox" id="c-${l.id}-${i}" data-key="${esc(tickKey(l,t))}"${checks[tickKey(l,t)]?" checked":""}><span>${esc(t)}${s?`<small>${esc(s)}</small>`:""}</span></label>`).join("")}</div>
    <div class="list-foot"><button class="reset" type="button" data-reset="${l.id}">Clear list</button></div></details>`;
 }
 function renderLists(){

@@ -91,7 +91,7 @@ const DAYS=[
     wl:"https://pt.wikiloc.com/trilhas-trekking/geira-e-cascatas-mata-de-albergaria-vilarinho-das-furnas-79646215",wlLabel:"Your earlier Wikiloc (10.5 km)",mq:"Portela do Homem, Terras de Bouro",
     warn:[["Rain & protected-zone notes","https://www.vagamundos.pt/mata-da-albergaria-portela-homem/"]]}],
   notes:[["warn","Rain rule","In heavy rain parts of the Geira by the river can become impassable. If it's pouring, swap this day with Saturday. The right bank of the waterfall is a fully protected zone, so stay on the left."],["moss","Dogs","Keep all four on leads inside the national park."]],
-  soak:{intro:"Lobios is on your route home, about 15 min from Portela do Homem. Pack towels, a dry layer and a flask in the morning.",list:["lobios"]},
+  soak:{intro:"Lobios is on your route home, about 15 min from Portela do Homem. Pack the ponchos, swimwear, a dry layer and a flask in the morning.",list:["lobios"]},
   sleep:LAMAS,night:"Night 3 of 4"},
  {date:"2026-11-28",n:9,wx:[42.02318,-8.15832],base:"pen",title:"Castro Laboreiro & Peneda",lede:"An oak-grove loop above the castle valley, then the Peneda sanctuary under its granite wall.",
   drive:"Camp → Castro Laboreiro about 15 min · then to the Santuário da Peneda.",
@@ -154,52 +154,82 @@ const OUTLETS={
   info:"Mon–Sat 10:00–22:00, closed Sunday (from a store directory, so check before you go). Roughly 30 min from As Nevedas by the AG-55 into A Coruña.",
   q:"El Corte Inglés Outlet Carretera de Baños de Arteixo 43 A Coruña",ll:[43.34509,-8.42836]}
 };
+/* Checklists. Item: [text, note, old tick position]. "keep" lists only add items at the end, so old positions still match. */
 const LISTS=[
- {id:"pre",title:"Before you go",sub:"Week of 13–19 Nov",items:[
+ {id:"pre",keep:1,title:"Before you go",sub:"Finish by Friday 20 Nov, 14:00",items:[
   ["Confirm the bodyboard session day and time with the school","Sun 22 or Tue 24 fit best"],["Check MeteoGalicia + IPMA 3 days out and swap days if needed",""],
   ["Download all trail tracks for offline use","Wikiloc offline needs Premium, or save Google Maps offline areas for Carballo, Pontedeume and Peneda"],
   ["Save the vet numbers and Fidelidade policy number in contacts","Info tab has them"],["Confirm with Fidelidade that Vetcare covers Spain on your policy",""],
   ["Van: tyre pressures for a full load, oil, coolant, washer fluid, wipers, lights",""],
   ["Charge both headlamps, power banks and the lantern",""],["Count tent pegs and guylines. Pack spares for hard ground.",""],["Portion dog food for 10 days + 2 spare",""],
-  ["Fill or swap the stove gas",""],["Cook Friday's dinner in advance","You'll arrive about 20:30"]]},
+  ["Fill or swap the stove gas","Propane or a winter mix. Plain butane struggles near freezing at Lamas de Mouro."],["Cook Friday's dinner in advance","You'll arrive about 20:30"],
+  ["Check all 4 dogs' rabies vaccinations are valid in their passports","Needed to cross into Spain"],
+  ["Flea, tick and sandfly protection up to date on all 4 dogs",""],
+  ["Confirm both campsites and ask for an electric pitch","Ask how many amps each one gives you"]]},
+ {id:"docs",title:"Papers & van",sub:"Two countries, one van",items:[
+  ["Citizen cards or passports × 2",""],["Driving licence",""],["Van registration and insurance papers",""],
+  ["European Health Insurance Cards × 2",""],["Bank cards + some cash in euros","Coins for campsite showers. Prexigueiro is about €7 each."],
+  ["Campsite bookings saved offline",""],["Via Verde in the van + a card for Spanish tolls",""],
+  ["Warning triangle + 2 hi-vis vests","Spain's V-16 beacon rule is for Spanish-registered vehicles"],
+  ["Spare wheel, jack, tyre inflator, jump leads",""]]},
  {id:"shelter",title:"Shelter & sleep",sub:"Tent, bed, light, power",items:[
-  ["Outwell Woodcrest: inner, flysheet, poles, pegs, guylines",""],["Mallet + peg extractor",""],
-  ["Exped DuoMat 10 Queen + pump bag + repair kit",""],["ALPS Twin Peak Double sleeping bag",""],["Pillows",""],
-  ["Extra fleece blanket for the coldest nights","Lamas de Mouro is at about 900 m"],
-  ["2 headlamps + spare batteries / cable",""],["Tent lantern",""],
-  ["Blue CEE 17 hook-up cable, 25 m",""],["CEE → Schuko adapter / socket box with RCD",""],
-  ["Doormat or small rug for muddy paws",""]]},
- {id:"dogs",title:"Dogs × 4",sub:"Everything for the four of them",items:[
+  ["Outwell Woodcrest: inner, flysheet, poles, pegs, guylines","","shelter:0"],["Mallet + peg extractor","","shelter:1"],
+  ["Exped DuoMat 10 Queen + pump bag + repair kit","","shelter:2"],["ALPS Twin Peak Double sleeping bag","","shelter:3"],["2 bed pillows","","shelter:4"],
+  ["Extra fleece blanket for the coldest nights","Lamas de Mouro is at about 900 m","shelter:5"],
+  ["Electric blanket","If you bring it. Plug it into the RCD socket box and keep it flat, dry and away from dog claws."],
+  ["Naturehike down boots","For cold feet in the sleeping bag. Tent only, so keep them dry."],
+  ["2 camp chairs",""],
+  ["2 headlamps + spare batteries / cable","","shelter:6"],["Tent lantern","","shelter:7"],
+  ["Blue CEE 17 hook-up cable, 25 m","","shelter:8"],["CEE → Schuko adapter / socket box with RCD","","shelter:9"],
+  ["Phone chargers + van USB cable",""],["Washing line + pegs",""],["Duct tape, cable ties, spare cord","For quick repairs"],
+  ["Doormat or small rug for muddy paws","","shelter:10"],["Dustpan and brush for the tent floor",""]]},
+ {id:"dogs",keep:1,title:"Dogs × 4",sub:"Everything for the four of them",items:[
   ["4 harnesses + 4 leads",""],["Long lines for camp",""],["ID tags on all collars",""],["Pet passports / vaccination records",""],
   ["Dog food: 10 days + 2 spare",""],["Bowls + collapsible water bowl for hikes",""],["Treats",""],
   ["4 beds / insulated mats + blankets","Keep them off the cold tent floor"],["Coats for the two older dogs",""],
   ["Lots of towels (wet every day)",""],["Poo bags",""],
-  ["Dog first aid: tick remover, bandage, saline, booties",""],["Regular meds / joint supplements",""],["Chew toys for tent evenings",""]]},
- {id:"kitchen",title:"Kitchen & coffee",sub:"Cooking is outside, never in the tent",items:[
+  ["Dog first aid: tick remover, bandage, saline, booties",""],["Regular meds / joint supplements",""],["Chew toys for tent evenings",""],
+  ["Clip-on lights for 4 collars","Dark from about 17:05 at Lamas de Mouro"],["Crates or seat-belt clips for the van",""]]},
+ {id:"kitchen",keep:1,title:"Kitchen & coffee",sub:"Cooking is outside, never in the tent",items:[
   ["Instant coffee (just add hot water)","2 people × 10 days, plus a spare jar"],["2 Stanley mugs (army green)",""],["Kettle or pot for boiling water",""],["Teaspoons",""],["Milk / sugar if you take it",""],
   ["Stove + gas",""],["Pans",""],["Plates, cutlery, sharp knife, board",""],["Cool box",""],
   ["Water jerrycan + bottles",""],["Washing-up bowl, sponge, eco soap, tea towel",""],["Bin bags",""],["Lighter + matches",""],
-  ["Spicy sauces & seasonings",""],["Food for Friday night + Saturday breakfast",""],["Thermos for hot drinks on the trail",""]]},
+  ["Spicy sauces & seasonings",""],["Food for Friday night + Saturday breakfast",""],["Thermos for hot drinks on the trail",""],
+  ["Stove windshield",""],["Can opener, corkscrew, spatula",""],["Kitchen roll + foil",""],["Lunchbox for trail lunches",""],["Tea or hot chocolate",""]]},
  {id:"wear",title:"Clothes & hiking",sub:"Wet and cold, then a bit more wet",items:[
-  ["Waterproof jackets + overtrousers",""],["Hiking boots (proofed) + spare dry pair",""],["Thermal base layers",""],["Fleece / insulated jackets",""],
-  ["Beanies + gloves",""],["Warm sleepwear + socks",""],["Camp shoes / Crocs",""],["Daypacks + rain covers",""],
-  ["Water bottles",""],["Trekking poles",""],["Human first-aid kit + blister plasters",""],["Power bank for the hikes",""]]},
+  ["Waterproof jackets + overtrousers","","wear:0"],["Hiking boots (proofed) + spare dry pair","","wear:1"],["Gaiters, if you own them","For the muddy stretches on the Eume"],
+  ["Thermal base layers","","wear:2"],["Fleece / insulated jackets","","wear:3"],["Hiking trousers, 2 pairs each","Quick-dry, not jeans"],
+  ["Walking socks, 1 pair per day","Wool stays warm when damp"],["Underwear for 10 days",""],
+  ["2 beanies","","wear:4"],["2 pairs of warm gloves","Waterproof if you have them","wear:4"],["2 neck warmers",""],
+  ["Warm sleepwear + socks","","wear:5"],["Camp shoes / Crocs","","wear:6"],["Laundry bag for wet and dirty clothes",""],
+  ["Daypacks + rain covers","","wear:7"],["Water bottles","","wear:8"],["Trekking poles","","wear:9"],["Power bank for the hikes","","wear:11"]]},
+ {id:"wash",title:"Wash bag & health",sub:"For the two of you",items:[
+  ["Human first-aid kit + blister plasters","","wear:10"],["Personal medication",""],["Toothbrushes + toothpaste",""],
+  ["Shower gel + shampoo",""],["Toilet paper + wet wipes",""],["Hand cream + lip balm",""],["Hand sanitiser",""],["Earplugs","Rain on the tent, and four dogs"]]},
+ {id:"soak",title:"Hot springs",sub:"Lobios Fri 27 · Prexigueiro optional Thu 26",items:[
+  ["2 surf ponchos","Your towels at the springs and at camp"],["2 small quick-dry towels","Back-up for when the ponchos are still wet"],
+  ["Swimwear × 2","Required at Prexigueiro"],["Crocs or non-slip sandals × 2","The stones at Río Caldo are slippery"],
+  ["Dry bag for wet swimwear and ponchos",""],["Dry warm layer for afterwards",""],["Thermos filled that morning + snacks","Only a snack bar at Lobios"],
+  ["Drinking water","Hot pools dehydrate you"],["Small padlock","Prexigueiro has lockers, but I couldn't confirm whether you need your own lock"],
+  ["Leave silver jewellery at camp","Sulphur water tarnishes it"],["Dog blankets and water in the van","The dogs wait there at Prexigueiro"]]},
  {id:"surf",title:"Bodyboard",sub:"One 1.5–2 h session in Galicia",items:[
-  ["Bodyboard + leash",""],["Fins + fin socks",""],["Winter wetsuit (+ boots, hood, gloves)","Galician water in late November is cold"],["Changing poncho + towel",""],["Bag for the wet suit",""]]},
- {id:"hikeday",title:"Every hike morning",sub:"Tick, walk, clear tomorrow",items:[
+  ["Bodyboard + leash","","surf:0"],["Fins + fin socks","","surf:1"],["Winter wetsuit (+ boots, hood, gloves)","Galician water in late November is cold","surf:2"],
+  ["Surf poncho","","surf:3"],["Bag for the wet suit","","surf:4"],["Spare water to rinse off the salt",""]]},
+ {id:"hikeday",keep:1,title:"Every hike morning",sub:"Tick, walk, clear tomorrow",items:[
   ["Today's track open and downloaded",""],["Water for 2 people + 4 dogs",""],["Leads, poo bags, collapsible bowl",""],
   ["Rain gear + spare layer",""],["Snacks / lunch",""],["Headlamp in the pack",""],["Dry towels and dog blankets in the van",""],
-  ["Know the turnaround time (back by 16:30)",""]]},
- {id:"pd1",title:"Pack-down · As Nevedas",sub:"Wed 25 Nov",items:[
+  ["Know the turnaround time (back by 16:30)",""],["Beanie, gloves and neck warmer",""]]},
+ {id:"pd1",keep:1,title:"Pack-down · As Nevedas",sub:"Wed 25 Nov",items:[
   ["Shake and wipe the flysheet. Pack it separately if wet.",""],["Deflate the DuoMat (open both valves)",""],
   ["Count pegs back in",""],["Unplug and coil the hook-up cable",""],["Empty bins, wash up",""],["Pay and check out",""],["Walk the pitch for anything left",""]]},
- {id:"pd2",title:"Pack-down · Lamas de Mouro",sub:"Sun 29 Nov · leave by 10:00",items:[
+ {id:"pd2",keep:1,title:"Pack-down · Lamas de Mouro",sub:"Sun 29 Nov · leave by 10:00",items:[
   ["Flysheet and inner packed separately if wet",""],["Deflate the DuoMat",""],["Count pegs back in",""],["Hook-up cable coiled",""],
   ["Bins emptied",""],["Pay and check out",""],["Walk the pitch",""],["Dogs walked before the 3 h drive",""]]},
- {id:"after",title:"After the trip",sub:"Back in Óbidos",items:[
+ {id:"after",keep:1,title:"After the trip",sub:"Back in Óbidos",items:[
   ["Pitch or hang the Woodcrest to dry fully within 48 h","Packed wet, it mildews fast"],["DuoMat out with valves open to dry",""],["Air the sleeping bag. Wash if needed.",""],
   ["Check the dogs for ticks, paws and ears",""],["Wash dog towels, blankets and beds",""],["Empty the cool box and water jerrycan",""],
-  ["Restock the first-aid kits and gas",""],["Submit any vet invoices to Fidelidade",""],["Clean the van floor and mats",""],["Note what worked for next time",""]]}
+  ["Restock the first-aid kits and gas",""],["Submit any vet invoices to Fidelidade",""],["Clean the van floor and mats",""],["Note what worked for next time",""],
+  ["Rinse the wetsuit, ponchos and swimwear in fresh water",""]]}
 ];
 
 /* Other places for the map: [kind, name, [lat,lon], maps query, note] */
