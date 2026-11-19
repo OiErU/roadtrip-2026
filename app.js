@@ -105,21 +105,9 @@ const tickKey=(l,t)=>l.id+":"+t;
 const doneOf=l=>l.items.filter(([t])=>checks[tickKey(l,t)]).length;
 
 /* ================= Header ================= */
-let INTRO="";
-function renderTop(view){
+function renderTop(){
   const top=$("#top");
-  if(view!=="today"){top.className="bar";top.innerHTML=`<div class="wrap"><i class="wm" aria-hidden="true"></i><span>Forests &amp; Waterfalls</span><span>20–29 Nov</span></div>`;return}
-  let photo="eumeRiver", line;
-  if(T<START){const n=diff(T,START);line=n===1?`Leaving <b>tomorrow</b>, Friday 20 November after lunch.`:`Leaving in <b>${n} days</b>, Friday 20 November after lunch.`}
-  else if(T<=END){const d=DAYS.find(z=>z.date===T);line=`Day <b>${d.n}</b> of 10: ${esc(d.title)}.`}
-  else line=`Home again. <b>Dry the tent.</b>`;
-  const c=CREDITS[photo];
-  top.className="hero";
-  top.innerHTML=`<img src="${img(photo)}" alt="">${c?`<a class="credit" href="${c[2]}" target="_blank" rel="noopener">Photo: ${esc(c[0])}</a>`:""}
-   <div class="wrap"><h1><span>Forests &amp;</span><span>Waterfalls</span></h1></div>`;
-  INTRO=`<div class="intro"><p class="when">${line}</p>
-   <div class="route"><span>Óbidos</span><i class="wm"></i><span>Costa da Morte</span><i class="wm"></i><span>Peneda-Gerês</span><i class="wm"></i><span>Óbidos</span></div></div>`;
-  const v=$("#v-today"),old=v.querySelector(".intro");if(old)old.outerHTML=INTRO;else v.insertAdjacentHTML("afterbegin",INTRO);
+  top.className="bar";top.innerHTML=`<div class="wrap"><i class="wm" aria-hidden="true"></i><span>Forests &amp; Waterfalls</span><span>20–29 Nov</span></div>`;
 }
 
 /* ================= Day page ================= */
@@ -148,11 +136,11 @@ function dayDetail(d,opts={}){
     <a class="chipnav" href="#day${next?next.n:d.n}" ${next?"":'aria-disabled="true"'}>${next?"Day "+next.n:"End"}${IC.r}</a></div>`;
   const main=d.hikes.map((h,k)=>[h,k]).filter(([h])=>!h.opt), opt=d.hikes.map((h,k)=>[h,k]).filter(([h])=>h.opt);
   const bcls=d.base==="gal"?"gal":d.base==="pen"?"pen":"road";
-  return `<div class="dayhero${opts.nav===false?" compact":""}"><img src="${img(cov)}" alt="">${nav}
+  return `${opts.hero===false?"":`<div class="dayhero${opts.nav===false?" compact":""}"><img src="${img(cov)}" alt="">${nav}
     <div class="in"><span class="when">${d.date===T?'<i class="wm"></i>Today, ':""}${f.W} ${f.d} November · Day ${d.n} of 10</span><h2>${esc(d.title)}</h2></div></div>
-  <div class="facts-row"><span class="fact ${bcls}">${baseLabel(d.base)}</span>${km?`<span class="fact">${km.toFixed(1)} km walking</span>`:""}${d.notes.some(n=>n[0]==="surf")?'<span class="fact">Surf slot</span>':""}</div>
+  <div class="facts-row"><span class="fact ${bcls}">${baseLabel(d.base)}</span>${km?`<span class="fact">${km.toFixed(1)} km walking</span>`:""}${d.notes.some(n=>n[0]==="surf")?'<span class="fact">Surf slot</span>':""}</div>`}
   <p class="lede">${esc(d.lede)}</p>
-  ${wxCard(d)}
+  ${opts.hero===false?"":wxCard(d)}
   <div class="drive">${IC.car}<div><b>Driving</b>${esc(d.drive)}</div></div>
   <div class="stack"><h3 class="h3">The day</h3><ul class="tl">${d.timeline.map(([t,s])=>`<li><span class="t">${esc(t)}</span><span>${esc(s)}</span></li>`).join("")}</ul></div>
   ${main.length?`<div class="stack"><h3 class="h3">${main.length>1?"The walks":"The walk"}</h3>${main.map(([h,k])=>hikeHTML(h,d,k)).join("")}</div>`:""}
@@ -207,24 +195,89 @@ function progBlock(l,label){
   return `<div class="prog"><div class="prog-top"><h3 class="h3">${label}</h3><span class="lbl num">${d} of ${l.items.length} done</span></div>
    <div class="meter"><i style="width:${100*d/l.items.length}%"></i></div><div class="btns"><a class="btn solid" href="#lists" data-open="${l.id}">Open the list</a></div></div>`;
 }
+/* Sun times (NOAA approximation): first light, sunrise, sunset, last light, as minutes in the day's local time */
+const tzOf=d=>d.base==="gal"||d.wx==="nevedas"?"Europe/Madrid":"Europe/Lisbon";
+function locMin(date,tz){
+  try{const p={};new Intl.DateTimeFormat("en-GB",{timeZone:tz,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(date).forEach(x=>p[x.type]=x.value);return +p.hour*60+ +p.minute}
+  catch(e){return date.getUTCHours()*60+date.getUTCMinutes()+(tz==="Europe/Madrid"?60:0)}
+}
+function sunOf(d){
+  const [lat,lon]=llOf(d), base=Date.parse(d.date+"T00:00:00Z"), n=Math.round((base-Date.UTC(+d.date.slice(0,4),0,0))/864e5), r=Math.PI/180;
+  const g=2*Math.PI/365*(n-.5), eq=229.18*(.000075+.001868*Math.cos(g)-.032077*Math.sin(g)-.014615*Math.cos(2*g)-.040849*Math.sin(2*g));
+  const dec=.006918-.399912*Math.cos(g)+.070257*Math.sin(g)-.006758*Math.cos(2*g)+.000907*Math.sin(2*g)-.002697*Math.cos(3*g)+.00148*Math.sin(3*g);
+  const at=alt=>{const ha=Math.acos(Math.cos((90-alt)*r)/(Math.cos(lat*r)*Math.cos(dec))-Math.tan(lat*r)*Math.tan(dec))/r;return[720-4*(lon+ha)-eq,720-4*(lon-ha)-eq]};
+  const tz=tzOf(d), m=x=>locMin(new Date(base+Math.round(x)*6e4),tz), [rise,set]=at(-.833), [dawn,dusk]=at(-6);
+  return{tz,first:m(dawn),rise:m(rise),set:m(set),last:m(dusk)};
+}
+const firstSentence=s=>{const m=String(s).match(/^.*?[.!?](\s|$)/);return(m?m[0]:s).trim()};
+function lightTile(d,s,now){
+  const a=Math.floor((s.first-30)/60)*60, b=Math.ceil((s.last+30)/60)*60, pc=m=>(Math.max(0,Math.min(1,(m-a)/(b-a)))*100).toFixed(1)+"%", w=(x,y)=>`left:${pc(x)};width:calc(${pc(y)} - ${pc(x)})`;
+  let head;
+  if(now==null)head=dur(s.set-s.rise)+" of sun";
+  else if(now<s.rise)head="Sunrise in "+dur(s.rise-now);
+  else if(now<s.set)head="Sunset in "+dur(s.set-now);
+  else if(now<s.last)head="Last light in "+dur(s.last-now);
+  else head="Dark now";
+  const out=d.outBy?toMin(d.outBy):null, band=d.band?[toMin(d.band[0]),toMin(d.band[1]),d.band[2]]:null;
+  return `<div class="tile wide light${now!=null&&now>=s.set?" late":""}"><div class="row"><span class="lab">Light ${now==null?"that day":"today"}</span><b class="num">${head}</b></div>
+   <div class="strip" role="img" aria-label="First light ${clock(s.first)}, sunrise ${clock(s.rise)}, sunset ${clock(s.set)}, last light ${clock(s.last)}${out?`. Out by ${d.outBy}`:""}">
+    <i class="nt"></i><i class="tw" style="${w(s.first,s.rise)}"></i><i class="dy" style="${w(s.rise,s.set)}"></i><i class="tw" style="${w(s.set,s.last)}"></i>
+    ${band?`<i class="band" style="${w(band[0],band[1])}"></i><span class="ml band-l" style="left:${pc(band[0])}">${esc(band[2])}</span>`:""}
+    ${out?`<i class="mk out" style="left:${pc(out)}"></i><span class="ml out-l" style="left:${pc(out)}">out ${d.outBy}</span>`:""}
+    ${now!=null&&now>a&&now<b?`<i class="mk now" style="left:${pc(now)}"></i><span class="ml now-l" style="left:${pc(now)}">now</span>`:""}
+   </div>
+   <div class="sunrow num"><span><b>${clock(s.first)}</b>first light</span><span><b>${clock(s.rise)}</b>sunrise</span><span><b>${clock(s.set)}</b>sunset</span><span><b>${clock(s.last)}</b>last light</span></div></div>`;
+}
+function weatherTile(d){
+  const w=wxFor(d), wet=w.fc?w.pp>=50:w.wet>=50, cold=w.lo<=3, camp=d.sleep===LAMAS?" at camp":"";
+  const title=cold&&wet?"Cold &amp; wet":cold?"Cold":wet?"Wet":w.fc?wxKind(w.code)[1]:"Typical weather";
+  const bits=[w.fc?(w.pp!=null?w.pp+"% rain":wxKind(w.code)[1]):`Rain on ${Math.round(w.wet/10)} days in 10`];
+  if(w.lo<=2)bits.push("frost likely"+camp+" tonight");else if(w.lo<=4)bits.push("near freezing"+camp+" tonight");else if(!w.fc&&w.frost>=5)bits.push(`frost ${Math.round(w.frost)}% of nights`);
+  if(w.fc&&w.gust>=45)bits.push("gusts "+w.gust+" km/h");
+  return `<div class="tile${cold||wet?" cool":""}"><span class="lab">${title}</span><span class="big num">${wxIcon(w.code)}${w.hi}° <small>${w.lo}°</small></span><span class="sm">${bits.join(" · ")}${w.fc?"":" (forecast not out yet)"}</span></div>`;
+}
+function dayTiles(d){
+  const s=sunOf(d), live=d.date===T, now=live?nowIn(s.tz==="Europe/Lisbon"?"pt":"es").min:null, f=fd(d.date);
+  const main=d.hikes.filter(h=>!h.opt), km=kmOf(d), t0=d.timeline[0]||["",""], leave=/^Leave/i.test(t0[1]);
+  const walkLine=main.length?`${km.toFixed(1)} km · ${main.length>1?main.length+" walks":esc(main[0].time)}${main[0].gain?` · ${main[0].gain} m up`:""}`:esc(d.drive.split(" · ").slice(0,2).map((x,i)=>i?x.split(",")[0]:x).join(" · ").replace(/\.$/,""));
+  const hero=`<a class="tile wide photo" href="${main.length?maps(main[0].mq):"#day"+d.n}"${main.length?' target="_blank" rel="noopener"':""} aria-label="${main.length?"Directions to "+esc(main[0].name):"Day "+d.n+" details"}">
+    <img src="${img(coverOf(d))}" alt=""><span class="row end"><span class="col"><span class="lab">${main.length?"The walk · "+esc(main[0].name.split(" · ")[0]):"Drive day"}</span><span class="sm">${walkLine}</span></span>
+    ${t0[0]?`<span class="col r"><span class="lab">${leave?"Leave":"Starts"}</span><b class="big num">${esc(t0[0])}</b></span>`:""}</span></a>`;
+  const second=d.clock?`<div class="tile dark"><span class="lab">Clock</span><b class="big num">${esc(d.clock[0])}</b><span class="sm">${esc(d.clock[1])}</span></div>`
+    :d.sleep?`<a class="tile" href="${maps(d.sleep.q)}" target="_blank" rel="noopener"><span class="lab">Tonight · ${esc(d.night.toLowerCase())}</span><b class="mid">${esc(d.sleep.name)}</b><span class="sm">Directions</span></a>`
+    :`<div class="tile"><span class="lab">Tonight</span><b class="mid">Home</b><span class="sm">${esc(d.night)}</span></div>`;
+  const place=(src,list,intro)=>list.slice(0,2).map(k=>{const o=src[k];return `<a class="tile wide place" href="${maps(o.q)}" target="_blank" rel="noopener"><span class="lab">${esc(o.tag)}</span><b class="mid">${esc(o.name)}</b><span class="sm">${esc(firstSentence(intro))}</span></a>`}).join("");
+  const warn=d.notes.find(n=>n[0]==="warn");
+  return `<div class="tiles" id="tiles">
+   <div class="t-head wide"><span class="lab">${f.W} ${f.d} Nov · Day ${d.n} of 10${d.clock?"":" · "+(s.tz==="Europe/Madrid"?"Spain":"Portugal")}</span><h1>${esc(d.title)}</h1></div>
+   ${hero}${lightTile(d,s,now)}${second}${weatherTile(d)}
+   ${d.soak?place(SOAKS,d.soak.list,d.soak.intro):""}${d.shops?place(OUTLETS,d.shops.list,d.shops.intro):""}
+   ${warn?`<div class="tile wide warn"><span class="lab">Watch out</span><b class="mid">${esc(warn[1])}</b><span class="sm">${esc(firstSentence(warn[2]))}</span></div>`:""}
+  </div>`;
+}
+function refreshTiles(){const el=document.getElementById("tiles");if(!el)return;const d=T<START?DAYS[0]:DAYS.find(z=>z.date===T);if(d)el.outerHTML=dayTiles(d)}
 function renderToday(){
   let h;
   const outlookNote=`<p class="wx-note">Live forecast from Open-Meteo where it reaches. Dashed days show what's typical for late November until the forecast covers them.</p>`;
   if(T<START){
-    h=`<div class="stack"><h2 class="h2">The ten days ahead</h2>${wxStrip(DAYS)}${outlookNote}</div>
+    const n=diff(T,START);
+    h=`<p class="when-line">${n===1?"Leaving <b>tomorrow</b>, Friday 20 November after lunch.":`Leaving in <b>${n} days</b>, Friday 20 November after lunch.`}</p>
      ${progBlock(LISTS[0],"Before you go")}
-     <div class="stack"><h2 class="h2">How Friday goes</h2></div>${dayDetail(DAYS[0],{nav:false})}`;
+     <div class="stack"><h2 class="h2">Friday at a glance</h2>${dayTiles(DAYS[0])}</div>
+     <div class="stack"><h2 class="h2">The ten days ahead</h2>${wxStrip(DAYS)}${outlookNote}</div>
+     <div class="stack"><h2 class="h2">How Friday goes</h2></div>${dayDetail(DAYS[0],{nav:false,hero:false})}`;
   }else if(T<=END){
     const i=DAYS.findIndex(z=>z.date===T), rest=DAYS.slice(i);
-    h=`${rest.length>1?`<div class="stack"><h2 class="h2">Days left</h2>${wxStrip(rest)}</div>`:""}
+    h=`${dayTiles(DAYS[i])}
      ${progBlock(LISTS.find(l=>l.id==="hikeday"),"Every hike morning")}
-     ${dayDetail(DAYS[i],{nav:false})}
-     ${DAYS[i+1]?`<div class="stack"><h2 class="h2">Tomorrow</h2><ol class="trail">${stopHTML(DAYS[i+1])}</ol></div>`:""}`;
+     <div class="stack"><h2 class="h2">The full day</h2></div>${dayDetail(DAYS[i],{nav:false,hero:false})}
+     ${DAYS[i+1]?`<div class="stack"><h2 class="h2">Tomorrow</h2><ol class="trail">${stopHTML(DAYS[i+1])}</ol></div>`:""}
+     ${rest.length>1?`<div class="stack"><h2 class="h2">Days left</h2>${wxStrip(rest)}</div>`:""}`;
   }else{
     h=`<div class="sec-head"><h2 class="title">Welcome home</h2><p class="sub">The after-trip list keeps the gear ready for next time.</p></div>${progBlock(LISTS.find(l=>l.id==="after"),"After the trip")}
      <div class="btns"><a class="btn" href="#plan">Look back at the plan</a></div>`;
   }
-  $("#v-today").innerHTML=INTRO+h;
+  $("#v-today").innerHTML=h;
 }
 
 /* ================= Map ================= */
@@ -446,7 +499,7 @@ document.addEventListener("click",e=>{
 });
 window.addEventListener("hashchange",()=>route());
 window.addEventListener("online",loadWeather);
-setInterval(refreshVets,60000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshVets()});
+setInterval(()=>{refreshVets();refreshTiles()},60000);document.addEventListener("visibilitychange",()=>{if(!document.hidden){refreshVets();refreshTiles()}});
 
 /* ================= Boot ================= */
 renderToday();renderPlan();renderLists();renderInfo();
