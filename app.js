@@ -265,9 +265,12 @@ async function initMap(){
     (d.soak?d.soak.list:[]).forEach((k,i)=>{const o=SOAKS[k];add({name:o.name,ll:o.ll,mq:o.q},`s-${d.n}-${i}`,true)});
   });
   PLACES.forEach(([k,name,ll,q,note])=>{
-    const icon=k==="vet"?divPin("vet","+",28):divPin("dot "+k,"",18);
-    L.marker(ll,{icon}).bindPopup(popup(name,esc(note),`<a href="${maps(q)}" target="_blank" rel="noopener">Directions</a>`)).addTo(MAP);
-    if(k==="vet")vet.push(ll);
+    L.marker(ll,{icon:divPin("dot "+k,"",18)}).bindPopup(popup(name,esc(note),`<a href="${maps(q)}" target="_blank" rel="noopener">Directions</a>`)).addTo(MAP);
+  });
+  Object.values(VETS).forEach(v=>{
+    L.marker(v.ll,{icon:divPin("vet"+(is24(v)?"":v.kind==="oncall"?" oncall":" day"),"+",28)})
+     .bindPopup(popup(v.name,esc((v.chain?v.chain+" · ":"")+hoursText(v)),`<a href="tel:${v.tel[0][0]}">Call</a><a href="${maps(v.q)}" target="_blank" rel="noopener">Directions</a>`)).addTo(MAP);
+    vet.push(v.ll);
   });
   Object.values(OUTLETS).forEach(o=>o.ll&&L.marker(o.ll,{icon:divPin("dot","",18)}).bindPopup(popup(o.name,"Outlet, optional",`<a href="${maps(o.q)}" target="_blank" rel="noopener">Directions</a>`)).addTo(MAP));
   GROUPS={all:all.concat([[39.36195,-9.15715]]),gal,pen,vet};
@@ -304,6 +307,69 @@ function refreshList(id){
   el.querySelector(".meter i").style.width=(100*done/l.items.length)+"%";
 }
 
+/* ================= Vets ================= */
+const DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const toMin=t=>+t.slice(0,2)*60+ +t.slice(3,5);
+const dur=m=>m<60?m+" min":Math.floor(m/60)+" h"+(m%60?" "+String(m%60).padStart(2,"0"):"");
+function nowIn(tz){ // weekday and minutes in the clinic's local time; ?date=…&time=HH:MM previews a moment
+  const q=new URLSearchParams(location.search),od=q.get("date"),ot=q.get("time");
+  if(od&&/^\d{4}-\d\d-\d\d$/.test(od))return{dow:new Date(od+"T12:00:00Z").getUTCDay(),min:ot&&/^\d\d:\d\d$/.test(ot)?toMin(ot):12*60};
+  try{const p={};new Intl.DateTimeFormat("en-GB",{timeZone:tz==="pt"?"Europe/Lisbon":"Europe/Madrid",weekday:"short",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date()).forEach(x=>p[x.type]=x.value);
+    return{dow:DOW.indexOf(p.weekday),min:+p.hour*60+ +p.minute}}
+  catch(e){const d=new Date();return{dow:d.getDay(),min:d.getHours()*60+d.getMinutes()}}
+}
+const clock=m=>String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0");
+const is24=v=>v.kind==="h24"||v.kind==="er";
+function hoursText(v){
+  if(v.kind==="h24")return"Open 24 h, every day";
+  const days=v.hrs.map((h,i)=>h&&[i,h.join("–")]).filter(Boolean), out=[];
+  days.forEach(([i,h])=>{const last=out[out.length-1];if(last&&last.h===h&&last.to===i-1)last.to=i;else out.push({from:i,to:i,h})});
+  const txt=out.map(o=>(o.from===o.to?DOW[o.from]:DOW[o.from]+"–"+DOW[o.to])+" "+o.h).join(" · ");
+  return txt+(v.kind==="er"?" · emergencies 24 h":v.kind==="oncall"?" · on-call vet 24 h":"");
+}
+function vetStatus(v,drive){
+  if(v.kind==="h24")return{ok:true,cls:"on",txt:"Open 24 h"};
+  const {dow,min}=nowIn(v.tz), h=v.hrs[dow], open=!!h&&min>=toMin(h[0])&&min<toMin(h[1]);
+  if(open&&(v.kind!=="clinic"||min+drive<=toMin(h[1])))return{ok:true,cls:"on",txt:"Open until "+h[1]};
+  if(v.kind==="er")return{ok:true,cls:"on",txt:"Emergencies only now"};
+  if(v.kind==="oncall")return{ok:true,cls:"call",txt:"On-call vet, phone first"};
+  if(open)return{ok:false,cls:"off",txt:"Closes "+h[1]+", before you'd arrive"};
+  for(let i=0;i<8;i++){const d=(dow+i)%7,x=v.hrs[d];if(x&&(i>0||min<toMin(x[0])))return{ok:false,cls:"off",txt:"Closed · opens "+(i===0?"at":i===1?"tomorrow":DOW[d])+" "+x[0]}}
+  return{ok:false,cls:"off",txt:"Closed"};
+}
+let VFROM=null;
+function vetFromDefault(){ // where you probably are, from the trip day and the hour
+  const d=DAYS.find(x=>x.date===T), h=nowIn("es").min/60, day=h>=9&&h<17;
+  if(!d)return T>END?"lamas":"nevedas";
+  if(d.n===4&&day)return"eume"; if(d.n===5&&day)return"ezaro"; if(d.n===8&&day)return"albergaria";
+  if(d.n===6)return h<10?"nevedas":h<15?"barosa":"lamas";
+  return d.n<=5?"nevedas":"lamas";
+}
+const vetTags=v=>(is24(v)?`<span class="vtag h">24 h</span>`:v.kind==="oncall"?`<span class="vtag k">24 h on call</span>`:`<span class="vtag k">Clinic hours</span>`)+(v.chain?`<span class="vtag c">${v.chain}</span>`:"");
+const vetTels=(v,first)=>v.tel.map(([n,l],i)=>`<a class="btn tel${first&&i===0?" solid":""}" href="tel:${n}">${IC.phone}${esc(l)}</a>`).join("");
+function vetsHTML(){
+  const from=VFROM||vetFromDefault(), fromLabel=VET_FROM.find(f=>f[0]===from)[1];
+  const L=Object.values(VETS).map(v=>({v,m:v.dr[from],s:vetStatus(v,v.dr[from])})).sort((a,b)=>a.m-b.m);
+  const open=L.filter(x=>x.s.ok), best=open[0], best24=L.find(x=>is24(x.v)), now=nowIn("es");
+  const others=open.filter(x=>x!==best).slice(0,2);
+  return `<div class="vnow">
+   <div class="vnow-k">Nearest open now · ${DOW[now.dow]} ${clock(now.min)} in Spain</div>
+   <h3 class="h3">${esc(best.v.name)}</h3><div>${vetTags(best.v)}</div>
+   <p>${esc(best.v.town)} · about <b>${dur(best.m)}</b> from ${esc(fromLabel)} · <span class="st-${best.s.cls}">${best.s.txt}</span></p>
+   ${best.v.kind==="oncall"?`<p>${esc(best.v.note)}</p>`:""}
+   <div class="btns">${vetTels(best.v,true)}${ext(maps(best.v.q),"Directions")}</div>
+   ${!is24(best.v)&&best24?`<p class="vnext">Nearest 24 h hospital: <b>${esc(best24.v.name)}</b>, ${dur(best24.m)}</p>`:""}
+   ${others.length?`<p class="vnext">Also open: ${others.map(x=>`${esc(x.v.name)}, ${dur(x.m)}`).join(" · ")}</p>`:""}
+  </div>
+  <label class="vfrom">Drive times from <select data-vfrom aria-label="Drive times from">${VET_FROM.map(([k,l])=>`<option value="${k}"${k===from?" selected":""}>${esc(l)}</option>`).join("")}</select></label>
+  <div class="vlist">${L.map(({v,m,s})=>`<details class="vrow"><summary><span class="vdot ${is24(v)?"r":v.kind==="oncall"?"o":""}" aria-hidden="true"></span>
+    <span class="vn"><b>${esc(v.name)}</b>${v.chain?`<span class="vtag c">${v.chain}</span>`:""}<small>${esc(v.town)} · <span class="st-${s.cls}">${s.txt}</span></small></span><span class="vt">${dur(m)}</span></summary>
+    <div class="vbody"><p>${hoursText(v)}</p><p class="mut">${esc(v.addr)}</p>${v.note?`<p>${esc(v.note)}</p>`:""}
+    <div class="btns">${vetTels(v,false)}${ext(maps(v.q),"Directions")}${v.web?ext(v.web,"Website"):""}</div></div></details>`).join("")}</div>
+  <p class="foot"><span class="vdot r"></span> 24 h emergencies <span class="vdot o"></span> on-call vet <span class="vdot"></span> clinic hours only. Hours are local time (Spain is an hour ahead). Drive times are estimates, so check Maps.</p>`;
+}
+function refreshVets(){const el=document.getElementById("vets");if(el)el.innerHTML=vetsHTML()}
+
 /* ================= Info ================= */
 function renderInfo(){
   $("#v-info").innerHTML=`<div class="sec-head"><h2 class="title">Field notes</h2><p class="sub">Campsites, vets, insurance, power and the practical details.</p></div>
@@ -315,18 +381,11 @@ function renderInfo(){
     <dl class="kv"><dt>Address</dt><dd>Veigas de Lama, 4960-170 Lamas de Mouro, Melgaço</dd><dt>GPS</dt><dd class="num">42.03582, -8.19608</dd><dt>Altitude</dt><dd>About 900 m, so frost is likely</dd><dt>Open</dt><dd>All year. Dogs allowed, dog park on site.</dd><dt>Park gate</dt><dd>Porta de Lamas de Mouro (trails and info)</dd></dl>
     <div class="btns">${tel("+351251466041","Campsite 251 466 041")}${tel("+351251465010","Park gate 251 465 010")}${ext(maps(LAMAS.q),"Directions")}${ext("https://www.pitchup.com/en-au/campsites/portugal/viana_do_castelo/melgaco/lamas_de_mouro/parque-de-campismo-lamas-de-mouro","Pitchup")}</div></div>
   </div></div>
-  <div class="stack"><div class="sec-head"><h2 class="h2">Vets</h2><p class="sub">Phone first so they're ready for you. Emergency in either country: 112.</p></div>
+  <div class="stack"><div class="sec-head"><h2 class="h2">Vets</h2><p class="sub">Spain or Portugal, whichever is faster. Phone first so they're ready for you. Emergency in either country: 112.</p></div>
   <div class="btns">${tel("112","Call 112")}<a class="btn" href="#map/vet" data-fit-vet>${IC.pin}Vets on the map</a></div>
-  <div class="cards">
-   <div class="card"><span class="k">Galicia, nearest</span><h3 class="h3">Hospital Vet. Atlántico<span class="h24">24 h</span></h3><p>Rúa Zaragoza 1, Arteixo (A Coruña). Open 24 h, 365 days a year. Roughly 25–30 min from As Nevedas.</p>
-    <div class="btns">${tel("+34881081991","+34 881 081 991")}${ext(maps("Hospital Veterinario Atlántico Rúa Zaragoza 1 Arteixo"),"Directions")}</div></div>
-   <div class="card"><span class="k">Galicia, backup</span><h3 class="h3">Hospital Vet. Abeiro<span class="h24">24 h</span></h3><p>Marqués de Amboage 24, A Coruña. Clinic Mon–Fri 10:30–20:00, Sat 10:30–14:00. Emergencies 24 h.</p>
-    <div class="btns">${tel("+34981153232","+34 981 153 232")}${ext(maps("Hospital Veterinario Abeiro Marqués de Amboage 24 A Coruña"),"Directions")}</div></div>
-   <div class="card"><span class="k">Peneda, nearest 24 h hospital</span><h3 class="h3">Hospital Vet. de Braga<span class="h24">24 h</span></h3><p>Rua de Abraão 63, Maximinos, Braga. Staffed 24 h every day. Roughly 1 h 30 from Lamas de Mouro.</p>
-    <div class="btns">${tel("+351253693121","253 693 121")}${ext(maps("Hospital Veterinário de Braga Rua de Abraão 63"),"Directions")}</div></div>
-   <div class="card"><span class="k">Peneda, something minor</span><h3 class="h3">Ask locally</h3><p>Melgaço has no vet listed. The nearest clinics are in Monção (about 35 min). For a non-urgent problem, ask campsite reception or the park gate which vet locals use.</p>
-    <div class="btns">${tel("+351251465010","Park gate 251 465 010")}</div></div>
-  </div></div>
+  <div id="vets">${vetsHTML()}</div>
+  <div class="card"><span class="k">Peneda, something minor</span><h3 class="h3">Ask locally</h3><p>Melgaço has no vet listed. The nearest clinics are in Monção (about 35 min). For a non-urgent problem, ask campsite reception or the park gate which vet locals use.</p>
+    <div class="btns">${tel("+351251465010","Park gate 251 465 010")}</div></div></div>
   <div class="card"><span class="k">Your pet insurance</span><h3 class="h3">Fidelidade Pets</h3><ul class="tight">
    <li><b>Spain is covered</b> for Vetcare, surgery and civil liability ("Na Europa"). Pay the Spanish vet, keep the itemised invoice, and claim reimbursement: Fidelidade pays 70% up to your cover limits.</li>
    <li><b>Portugal only:</b> Telepet (vet video/phone advice, daily 07:00–22:00), Pet Assistance, vaccines and check-ups.</li>
@@ -376,7 +435,7 @@ function route(keep){
 }
 
 /* ================= Events ================= */
-document.addEventListener("change",e=>{const k=e.target.dataset&&e.target.dataset.key;if(!k)return;if(e.target.checked)checks[k]=1;else delete checks[k];save();refreshList(k.split(":")[0]);renderToday()});
+document.addEventListener("change",e=>{if(e.target.matches("[data-vfrom]")){VFROM=e.target.value;refreshVets();document.querySelector("[data-vfrom]").focus();return}const k=e.target.dataset&&e.target.dataset.key;if(!k)return;if(e.target.checked)checks[k]=1;else delete checks[k];save();refreshList(k.split(":")[0]);renderToday()});
 document.addEventListener("click",e=>{
   const f=e.target.closest("[data-fit]");if(f){fitTo(f.dataset.fit);return}
   const r=e.target.closest("[data-reset]");
@@ -387,6 +446,7 @@ document.addEventListener("click",e=>{
 });
 window.addEventListener("hashchange",()=>route());
 window.addEventListener("online",loadWeather);
+setInterval(refreshVets,60000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)refreshVets()});
 
 /* ================= Boot ================= */
 renderToday();renderPlan();renderLists();renderInfo();
