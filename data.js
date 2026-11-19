@@ -5,8 +5,9 @@ const LAMAS={name:"Lamas de Mouro campsite",q:"42.03582,-8.19608",ll:[42.03582,-
 const DAYS=[
  {date:"2026-11-20",n:1,base:"road",cover:"razo",wx:"nevedas",title:"Run north",lede:"Straight to Galicia so Saturday starts with the first trail, not the drive.",
   drive:"Óbidos → Camping As Nevedas · about 550 km, around 5 h of driving plus dog stops. Spain is one hour ahead.",
-  timeline:[["14:00","Leave Óbidos after lunch (Portuguese time)"],["~16:00","First dog stop, about 2 h in"],["~18:00","Second stop near Valença / Tui"],["~20:30","Arrive at As Nevedas (Spanish time). It's dark from about 18:05."],["","Pitch the Woodcrest by headlamp, inflate the DuoMat, dogs in, dinner made at home"]],
+  timeline:[["14:00","Leave Óbidos after lunch (Portuguese time)"],["~16:00","First dog stop, about 2 h in"],["~18:30","Second stop at El Corte Inglés Outlet Porriño, about 20 min past Tui. That's 19:30 Spanish time, and it's open until 21:00. A 15-min browse and a dog walk in one."],["~20:45","Arrive at As Nevedas (Spanish time). It's dark from about 18:05."],["","Pitch the Woodcrest by headlamp, inflate the DuoMat, dogs in, dinner made at home"]],
   hikes:[],notes:[["moss","Night pitch","Woodcrest first with pegs and guylines, then DuoMat and sleeping bag, then the dogs' beds. Unload the van in that order so you aren't digging for things in the dark."]],
+  shops:{intro:"Porriño is right on the motorway north of Tui, so the second stop doubles as a quick look round the outlet. It adds only about 10 min of driving. Keep it to 15 min so you still pitch before it gets late.",list:["porrino"]},
   sleep:NEVEDAS,night:"Night 1 of 5"},
  {date:"2026-11-21",n:2,wx:[43.1946,-8.9522],base:"gal",title:"Mills & a hillfort",lede:"Big shop in the morning, then a wooded stream of old mills up to an Iron Age castro.",
   drive:"Lidl Carballo (on the way) · Carballo → Cabana de Bergantiños about 35 min each way.",
@@ -141,7 +142,7 @@ const CHOICES=[
  ["new","Fervenza do Belelle (Neda)","Added as an add-on to Monday if you do the short Eume version: a 40 m+ waterfall, about 4 km there and back."],
  ["opt","Fraga de Cecebre (Cambre)","Optional on Tuesday instead of Ézaro, if you'd rather drive less. Only a small part of the old forest is left, so keep expectations modest."],
  ["opt","Fragas do Mandeo (Zarzo–Chelo)","Optional swap for Sunday if the dogs are full of energy: a 10.5 km riverside forest loop, or part of it from Chelo."],
- ["opt","El Corte Inglés outlets","Altamira (Cambre) or A Coruña city, on Saturday or Tuesday. Altamira pairs with the Cecebre option."],
+ ["opt","El Corte Inglés outlets","Porriño as a 15-min stop on Friday's drive north. Then Altamira (Cambre) or A Coruña city on Saturday or Tuesday. Altamira pairs with the Cecebre option."],
  ["opt","Vía Verde Tambre–Lengüelle","Greenway option for Tuesday: flat old railway through oak woods by the Lengüelle river, about 50 min from camp. A better forest than Cecebre."],
  ["opt","Bosque da Fervenza (O Corgo)","Optional swap for Ézaro on Tuesday: a flat 3.5 km path through a rare forest that the Miño floods, about 1 h 30 from camp. Late November floods may close parts of it, so check the day before."],
  ["opt","Ecopista do Rio Minho (Valença)","Greenway option for the transfer day: walk the old riverside railway at Valença instead of the short Poio loop."],
@@ -165,7 +166,10 @@ const OUTLETS={
   tel:["981 189 400","+34981189400"],q:"El Corte Inglés Outlet Altamira Cambre",ll:[43.26377,-8.36882],page:"https://www.elcorteingles.es/centroscomerciales/es/outlet/centros/outlet-altamira"},
  coruna:{tag:"A Coruña city",name:"El Corte Inglés Outlet A Coruña",addr:"Ctra. de Baños de Arteixo 43 (Riazor area), A Coruña",
   info:"Mon–Sat 10:00–22:00, closed Sunday (from a store directory, so check before you go). Roughly 30 min from As Nevedas by the AG-55 into A Coruña.",
-  q:"El Corte Inglés Outlet Carretera de Baños de Arteixo 43 A Coruña",ll:[43.34509,-8.42836]}
+  q:"El Corte Inglés Outlet Carretera de Baños de Arteixo 43 A Coruña",ll:[43.34509,-8.42836]},
+ porrino:{tag:"Friday · on the drive north",name:"El Corte Inglés Outlet Porriño",addr:"Parque Empresarial das Gándaras, O Porriño (Pontevedra). The official site lists it as Ctra. A-5, km 162, 36400 O Porriño.",
+  info:"Mon–Sat 10:00–21:00, closed Sunday. The official calendar shows no special hours for Friday 20 November. About 20 min past Tui, and only about 10 min of extra driving on the way to As Nevedas. Dogs wait in the van.",
+  q:"El Corte Inglés Outlet Porriño",ll:[42.125,-8.626],page:"https://www.elcorteingles.es/centroscomerciales/es/outlet/centros/outlet-porrino"}
 };
 /* Checklists. Item: [text, note, old tick position]. "keep" lists only add items at the end, so old positions still match. */
 const LISTS=[
@@ -175,7 +179,7 @@ const LISTS=[
   ["Save the vet numbers and Fidelidade policy number in contacts","Info tab has them"],["Confirm with Fidelidade that Vetcare covers Spain on your policy",""],
   ["Van: tyre pressures for a full load, oil, coolant, washer fluid, wipers, lights",""],
   ["Charge both headlamps, power banks and the lantern",""],["Count tent pegs and guylines. Pack spares for hard ground.",""],["Portion dog food for 10 days + 2 spare",""],
-  ["Fill or swap the stove gas","Propane or a winter mix. Plain butane struggles near freezing at Lamas de Mouro."],["Cook Friday's dinner in advance","You'll arrive about 20:30"],
+  ["Fill or swap the stove gas","Propane or a winter mix. Plain butane struggles near freezing at Lamas de Mouro."],["Cook Friday's dinner in advance","You'll arrive about 20:45"],
   ["Check all 4 dogs' rabies vaccinations are valid in their passports","Needed to cross into Spain"],
   ["Flea, tick and sandfly protection up to date on all 4 dogs",""],
   ["Confirm both campsites and ask for an electric pitch","Ask how many amps each one gives you"]]},

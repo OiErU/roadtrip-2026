@@ -396,8 +396,8 @@ function renderInfo(){
    <div class="card"><h3 class="h3">Hook-up</h3><ul class="tight"><li>Ask both campsites for an electric pitch and <b>how many amps</b>.</li><li>Rough total for the whole pitch: <span class="num">6 A ≈ 1,380 W, 10 A ≈ 2,300 W, 16 A ≈ 3,680 W</span>.</li><li>Blue CEE 17 cable, 25 m, fully unrolled when in use. A coiled cable heats up.</li><li>Socket box with RCD. Keep connections off wet ground.</li></ul></div>
    <div class="card"><h3 class="h3">At 900 m in November</h3><ul class="tight"><li>Lift the dogs' beds off the tent floor with insulated mats. Coats for the older two at night.</li><li>Leave a vent open to cut condensation. Wipe the inner each morning.</li><li>Keep drinking water inside so it doesn't freeze. Drive slowly on frosty mornings.</li><li>Typical nights here in late November are around ${CLIMATE.lamas.lo}°C, colder than the coast (${CLIMATE.nevedas.lo}°C).</li></ul></div>
   </div></div>
-  <div class="stack"><div class="sec-head"><h2 class="h2">Outlet shopping</h2><p class="sub">El Corte Inglés outlets near the Galicia base. Spanish shops close on Sunday, so go on Saturday 21 or Tuesday 24.</p></div>
-  <div class="cards">${outletCard("altamira")}${outletCard("coruna")}</div></div>
+  <div class="stack"><div class="sec-head"><h2 class="h2">Outlet shopping</h2><p class="sub">El Corte Inglés outlets: Porriño on Friday's drive north, then two near the Galicia base. Spanish shops close on Sunday, so go to those on Saturday 21 or Tuesday 24.</p></div>
+  <div class="cards">${outletCard("porrino")}${outletCard("altamira")}${outletCard("coruna")}</div></div>
   <div class="stack"><div class="sec-head"><h2 class="h2">Daylight</h2><p class="sub">Walks are planned to finish by about 16:30.</p></div>
   <div class="panel"><div class="tbl"><table><thead><tr><th>Place</th><th>Date</th><th>Sunrise</th><th>Sunset</th><th>Last light</th></tr></thead><tbody>
    <tr><td>As Nevedas (ES)</td><td>20 Nov</td><td>08:34</td><td>18:05</td><td>18:37</td></tr>
