@@ -6,7 +6,10 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const ext=(href,label,cls="")=>`<a class="btn ${cls}" href="${href}" target="_blank" rel="noopener">${label}</a>`;
 /* Driving directions. Coordinates when we have them (exact), the place name otherwise. Google or Apple Maps, chosen in Info. */
 const NAVKEY="fw2026-nav";let NAV="google";try{NAV=localStorage.getItem(NAVKEY)||"google"}catch(e){}
-const driveURL=(ll,q)=>{const dest=ll?ll[0]+","+ll[1]:q;return NAV==="apple"?"https://maps.apple.com/?daddr="+encodeURIComponent(dest)+"&dirflg=d":"https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(dest)+"&travelmode=driving"};
+const driveURL=(ll,q)=>{const dest=ll?ll[0]+","+ll[1]:q;
+  if(NAV==="apple")return"https://maps.apple.com/?daddr="+encodeURIComponent(dest)+"&dirflg=d";
+  if(NAV==="waze")return"https://waze.com/ul?"+(ll?"ll="+encodeURIComponent(dest):"q="+encodeURIComponent(q))+"&navigate=yes";
+  return"https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(dest)+"&travelmode=driving"};
 const drive=(ll,q,label="Drive there")=>`<a class="btn go" href="${driveURL(ll,q)}" target="_blank" rel="noopener">${IC.car}${esc(label)}</a>`;
 const driveLink=(ll,q)=>`<a href="${driveURL(ll,q)}" target="_blank" rel="noopener">Drive there</a>`;
 const img=(k,thumb)=>`img/${thumb?"t/":""}${k}.jpg`;
@@ -575,8 +578,8 @@ function refreshVets(){const el=document.getElementById("vets");if(el)el.innerHT
 /* ================= Info ================= */
 function renderInfo(){
   $("#v-info").innerHTML=`<div class="sec-head"><h2 class="title">Field notes</h2><p class="sub">Campsites, vets, insurance, power and the practical details.</p></div>
-  <div class="panel navpick"><div><h3 class="h3">Drive there opens in</h3><p class="sub">Every Drive there button in the app uses this. Apple Maps is always on the iPhone. Google Maps opens the app if you have it, or the website if not.</p></div>
-   <div class="seg" role="group" aria-label="Maps app for directions"><button type="button" data-nav="google" aria-pressed="${NAV==="google"}">Google Maps</button><button type="button" data-nav="apple" aria-pressed="${NAV==="apple"}">Apple Maps</button></div></div>
+  <div class="panel navpick"><div><h3 class="h3">Drive there opens in</h3><p class="sub">Every Drive there button in the app uses this. Apple Maps is always on the iPhone. Google Maps and Waze open their app if you have it installed, otherwise the website or the App Store. Waze also warns about police, hazards and traffic reported by other drivers.</p></div>
+   <div class="seg" role="group" aria-label="Maps app for directions"><button type="button" data-nav="google" aria-pressed="${NAV==="google"}">Google</button><button type="button" data-nav="apple" aria-pressed="${NAV==="apple"}">Apple</button><button type="button" data-nav="waze" aria-pressed="${NAV==="waze"}">Waze</button></div></div>
   <div class="stack"><h2 class="h2">Campsites</h2><div class="cards">
    <div class="card"><span class="k">20–25 Nov, 5 nights</span><h3 class="h3">Camping As Nevedas</h3>
     <dl class="kv"><dt>Address</dt><dd>Carretera Rapadoiro–Noicela, 15105 Carballo (A Coruña)</dd><dt>GPS</dt><dd class="num">43.29319, -8.62229</dd><dt>Open</dt><dd>All year. Dogs allowed (microchipped).</dd><dt>Nearby</dt><dd>Razo, Baldaio and Caión beaches. Carballo 15 min, A Coruña about 25 min.</dd><dt>Power</dt><dd>Optional. Ask on arrival.</dd></dl>
