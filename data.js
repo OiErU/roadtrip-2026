@@ -12,14 +12,16 @@ const DAYS=[
   sleep:NEVEDAS,night:"Night 1 of 5"},
  {date:"2026-11-21",n:2,wx:[43.1946,-8.9522],base:"gal",title:"Mills & a hillfort",lede:"Big shop in the morning, then a wooded stream of old mills up to an Iron Age castro.",
   drive:"Lidl Carballo (on the way) · Carballo → Cabana de Bergantiños about 35 min each way.",
-  timeline:[["09:30","Main shop at Lidl Carballo. Many Spanish shops are closed or have short hours on Sunday."],["11:30","Start the walk from the mills"],["~13:00","Lunch at Castro de Borneiro (about km 3.9)"],["~15:00","Back at the van"]],
+  timeline:[["09:30","Main shop at Lidl Carballo. Many Spanish shops are closed or have short hours on Sunday."],["11:30","Start the walk from the mills"],["~13:00","Lunch at Castro de Borneiro (about km 3.9)"],["~15:00","Back at the van"],["~15:40","Surf at Area Maior, Malpica, about 30 min from the walk. Silvana and the dogs walk the bay."]],
   hikes:[{name:"Rego dos Muiños & Castro de Borneiro",photo:"castro",ll:[43.1946, -8.9522],km:7.9,gain:207,type:"Out & back",time:"~3 h",
     text:"Stream, moss and stone mills on the way out, then the castro at about km 3.9. The natural split is lunch at the castro, then walking back the same way.",
     wl:"https://es.wikiloc.com/rutas-senderismo/ruta-do-rego-dos-muinos-castro-de-borneiro-223630672",mq:"Castro de Borneiro, Cabana de Bergantiños"}],
-  notes:[],shops:{intro:"Good for a rainy afternoon after the walk. Both outlets are about 30–35 min from camp and closed on Sunday, so today or Tuesday are the days.",list:["altamira","coruna"]},sleep:NEVEDAS,night:"Night 2 of 5"},
- {date:"2026-11-22",n:3,wx:"nevedas",base:"gal",title:"Waterfall & mill woods",lede:"Two short, gentle walks close to camp. A low-load day before the Eume, and the first possible surf slot.",
+  notes:[],shops:{intro:"Good for a rainy afternoon after the walk. Both outlets are about 30–35 min from camp and closed on Sunday, so today or Tuesday are the days.",list:["altamira","coruna"]},
+  surf:{b:"areamaior",win:["15:40","17:30"],from:["the walk",30,26],plan:{faces:[0.9,1.2],wind:"cross-offshore",slot:"15:40"}},
+  sleep:NEVEDAS,night:"Night 2 of 5"},
+ {date:"2026-11-22",n:3,wx:"nevedas",base:"gal",title:"Waterfall & mill woods",lede:"Two short, gentle walks close to camp. A low-load day before the Eume, then an afternoon surf at Sabón.",
   drive:"Local only · 20–30 min from camp to each trailhead.",
-  timeline:[["10:00","Refuxio de Verdes loop"],["~12:30","Lunch, then Fervenza de San Paio (Entrecruces)"],["15:00","Possible bodyboard slot at Razo. Silvana and the dogs walk the dunes."]],
+  timeline:[["10:00","Refuxio de Verdes loop"],["~12:30","Lunch, then Fervenza de San Paio (Entrecruces)"],["~15:30","Drive to Sabón, Arteixo (about 25 min)"],["16:00","Surf at Sabón. Silvana and the dogs walk the beach."]],
   hikes:[
    {name:"Refuxio de Verdes",photo:"verdes",ll:[43.22961, -8.78132],km:3.0,gain:23,type:"Loop",time:"~1 h 10",
     text:"Flat riverside loop through dense wood, stone mills, channels and small bridges. Ideal for the older two.",
@@ -30,40 +32,42 @@ const DAYS=[
    {name:"Fragas do Mandeo · Zarzo–Chelo",photo:"mandeo",ll:[43.26334, -8.16512],opt:"Optional swap",km:10.5,gain:null,type:"Loop",time:"~3 h 30",
     text:"Riverside Atlantic forest along the Mandeo in the Mariñas–Mandeo Biosphere Reserve, past the Presa da Cabra weir, with roe deer and otters about. The full loop is 10.5 km. If everyone feels fresh, do it instead of Verdes + San Paio, or walk part of it from Chelo and turn back. About 45 min from camp, and it makes Sunday a long day right before the Eume, so only if the dogs are flying.",
     src:"https://blog.turismo.gal/?p=14090",srcLabel:"Route description",mq:"Ponte de Chelo, Coirós"}],
-  notes:[["surf","Surf slot A","Razo and Baldaio are right by the campsite. If the school prefers mornings, swap the two walks to the afternoon. Sunset is about 18:05."]],
+  notes:[],
+  surf:{b:"sabon",win:["14:00","17:30"],from:["camp",24,17],plan:{faces:[1.5,2.1],wind:"cross-onshore",slot:"16:00"}},
   sleep:NEVEDAS,night:"Night 3 of 5"},
- {date:"2026-11-23",n:4,base:"gal",cover:"eumeRiver",wx:[43.41758,-8.06845],title:"Fragas do Eume",lede:"The deep Atlantic forest, and the reason for the Galicia week. It's a Monday, so parking should be quiet.",
+ {date:"2026-11-23",n:4,base:"gal",cover:"eumeRiver",wx:[43.41758,-8.06845],title:"Fragas do Eume & Caión",lede:"The deep Atlantic forest in the morning, on the short version, then a surf at Caión, five minutes from camp. It's a Monday, so parking should be quiet.",
   drive:"Camp → Fragas do Eume (Pontedeume side) about 1 h each way. Outside summer you can drive to the Santa Cristina bridge near Caaveiro.",
-  timeline:[["09:00","Leave camp"],["10:00","Start walking"],["~12:30","Lunch at San Xoán de Caaveiro monastery"],["~15:00","Walk back. Leave the forest by 16:30 so you drive back in daylight."],["","Did the short version? Add the Fervenza do Belelle on the way back (about 1 h)."]],
-  hikes:[{name:"Camiño dos Encomendeiros",photo:"eume",ll:[43.41758, -8.06845],km:11.8,gain:110,type:"Circuit",time:"~4 h",
-    text:"Full version: the Wikiloc circuit from the Cal Grande suspension bridge to Caaveiro, about 6 km in the morning and 6 km in the afternoon with a long lunch between. Short version for tired legs: park at Santa Cristina bridge and walk to the monastery and along the river, 4–6 km out and back.",
+  timeline:[["09:00","Leave camp"],["10:00","Start walking at the Santa Cristina bridge"],["~11:00","San Xoán de Caaveiro monastery, then along the river"],["~12:30","Back at the van, quick lunch"],["~13:30","Back at camp"],["14:00","Surf at Caión, about 8 min away"]],
+  hikes:[{name:"Fragas do Eume · Santa Cristina to Caaveiro",photo:"eume",ll:[43.41758, -8.06845],km:5,gain:null,type:"Out & back",time:"~2 h 30",
+    text:"The short version, to leave the afternoon for surf: park at the Santa Cristina bridge, walk to the San Xoán de Caaveiro monastery and along the river, 4–6 km out and back. The full version, the Camiño dos Encomendeiros circuit from the Cal Grande suspension bridge (11.8 km, ~4 h), is on the Wikiloc link if you skip the surf.",
     wl:"https://pt.wikiloc.com/trilhas-trekking/p-nat-fragas-do-eume-camino-dos-encomendeiros-do-ponte-colgante-de-cal-grande-ao-mosteiro-de-san-xo-73382233",mq:"Ponte de Santa Cristina, Caaveiro, Fragas do Eume",
     warn:[["Route status (Xunta)","https://patrimonionatural.xunta.gal/es/node/46"],["Rope section & tips","https://blog.mundo-r.com/rutas-fragas-do-eume/"]]},
-   {name:"Fervenza do Belelle · Neda",photo:"belelle",ll:[43.48173, -8.1212],opt:"Add-on with the short Eume",km:4,gain:null,type:"Out & back",time:"~1 h",
+   {name:"Fervenza do Belelle · Neda",photo:"belelle",ll:[43.48173, -8.1212],opt:"Add-on if you skip the surf",km:4,gain:null,type:"Out & back",time:"~1 h",
     text:"A waterfall of more than 40 m in the woods, 15–20 min from the Eume. Park at the end of the narrow road by the small power station and follow the path along the stone water channel to the foot of the falls, about 4 km there and back. Skip the steep path up to the wooden viewpoint.",
     src:"https://blog.turismo.gal/the-belelle-waterfall/",srcLabel:"Route description",mq:"Fervenza do Belelle, Neda",
     warn:[["Roots & slippery pools","https://blog.turismo.gal/the-belelle-waterfall/"]]}],
-  notes:[["warn","Not with the dogs: the rope section","Walkers report a slippery rocky mound and a mud-and-stone stretch where a rope is used. That isn't dog terrain. Its exact position isn't documented, so treat it as your turnaround: if you reach the rope, go back the way you came. The short version (Santa Cristina bridge → Caaveiro → along the river and back) is the safest choice. The route has also had temporary closures in past years, so check the Xunta page or the Centro de Interpretación the day before."],["moss","Dog plan","This is the longest day of the trip. Decide the full or short version at the lunch stop based on the older two."]],
-  outBy:"16:30",
+  notes:[["warn","Not with the dogs: the rope section","Walkers report a slippery rocky mound and a mud-and-stone stretch where a rope is used. That isn't dog terrain. Its exact position isn't documented, so treat it as your turnaround: if you reach the rope, go back the way you came. The short version (Santa Cristina bridge → Caaveiro → along the river and back) is the safest choice. The route has also had temporary closures in past years, so check the Xunta page or the Centro de Interpretación the day before."],["moss","Dog plan","The dogs rest in the van or walk the beach with Silvana while you surf. If the swell is too small or blown out, do the full Eume circuit instead."]],
+  surf:{b:"caion",win:["14:00","16:30"],from:["camp",8,4],plan:{faces:[1.0,1.4],wind:"cross-offshore",slot:"14:00"}},
   sleep:NEVEDAS,night:"Night 4 of 5"},
- {date:"2026-11-24",n:5,wx:"nevedas",base:"gal",title:"Recovery & Ézaro",lede:"An easy day after the Eume. Surf in the morning if the forecast is good, then the waterfall that drops to the sea.",
-  drive:"Camp → O Ézaro (Dumbría) about 1 h 20 each way along the Costa da Morte.",
-  timeline:[["09:30","Possible bodyboard slot at Razo (alternative to Sunday)"],["12:30","Drive to Ézaro, lunch with the view"],["~14:30","Waterfall walkway"],["~17:00","Back at camp. Prepare to pack down tomorrow."]],
-  hikes:[{name:"Fervenza do Ézaro",photo:"ezaro",ll:[42.91288, -9.11644],km:0.9,gain:0,type:"Walkway",time:"~30 min",
+ {date:"2026-11-24",n:5,wx:"nevedas",base:"gal",title:"Cecebre & Bastiagueiro",lede:"An easy forest walk by the Mero river, then surf at Bastiagueiro, the sheltered beach inside the Ría de A Coruña, 15 min away.",
+  drive:"Camp → Cecebre about 30–35 min · Cecebre → Bastiagueiro about 17 min · Bastiagueiro → camp about 40 min.",
+  timeline:[["10:00","Leave camp for Cecebre"],["10:45","Walk along the Mero river and the old mills"],["~12:30","Lunch. Outlet Altamira is a few minutes away."],["~13:40","Drive to Bastiagueiro"],["14:00","Surf at Bastiagueiro"],["~16:00","Back at camp. Prepare to pack down tomorrow."]],
+  hikes:[{name:"Fervenza do Ézaro",photo:"ezaro",ll:[42.91288, -9.11644],opt:"Swap if you skip the surf",km:0.9,gain:0,type:"Walkway",time:"~30 min",
     text:"Stone steps beside the power plant, then a wooden walkway to the foot of the falls. Flow depends on dam releases. After heavy rain it's spectacular, and in dry spells it can be a trickle.",
     wl:"https://www.wikiloc.com/walking-trails/fervenza-rio-ezaro-78644575",mq:"Fervenza do Ézaro",
     warn:[["Access & flow","https://visitacostadamorte.com/en/post/cascada-del-ezaro"]]},
-   {name:"Fraga de Cecebre · Mero river",photo:"cecebre",ll:[43.28792, -8.30775],opt:"Closer option",km:4,gain:null,type:"Out & back",time:"~1 h 30",
-    text:"The forest that inspired 'El bosque animado', about 30–35 min from camp instead of 1 h 20. Be aware that only a small part of the old forest remains: it isn't a marked trail, the paths alternate between dirt and paving, and there's eucalyptus around. Walk from the Cecebre station area along the Mero river and the old mills, and turn back whenever you like. Choose it over Ézaro if you'd rather drive less after the Eume.",
+   {name:"Fraga de Cecebre · Mero river",photo:"cecebre",ll:[43.28792, -8.30775],km:4,gain:null,type:"Out & back",time:"~1 h 30",
+    text:"The forest that inspired 'El bosque animado', about 30–35 min from camp instead of 1 h 20. Be aware that only a small part of the old forest remains: it isn't a marked trail, the paths alternate between dirt and paving, and there's eucalyptus around. Walk from the Cecebre station area along the Mero river and the old mills, and turn back whenever you like. It pairs with the surf at Bastiagueiro, about 17 min away.",
     wl:"https://www.wikiloc.com/mountain-biking-trails/senda-fluvial-rio-mero-a-barcala-cecebre-pazo-de-orto-34585033",wlLabel:"Mero river path (Wikiloc)",mq:"Apeadeiro de Cecebre, Cambre"},
    {name:"Vía Verde Tambre–Lengüelle",photo:"tambre",ll:[43.01482,-8.45608],opt:"Greenway option",km:5,gain:null,type:"Out & back",time:"~1 h 45",
     text:"Galicia's longest vía verde, on the old Santiago–A Coruña railway, so it's flat and wide. The best stretch is the old railway curves through oak, chestnut and alder woods beside the Lengüelle river, between the former Garga–Trasmonte station (rest area) and the Tambre viaduct. Park by the station, walk south about 2.5 km and come back. About 50 min from camp. A stronger forest walk than Cecebre if you'd rather skip the long Ézaro drive. You share the path with bikes, so keep the dogs close. The 207 m Túnel da Costa is dimly lit if you go that far, so bring a headlamp.",
     src:"https://viasverdes.com/en/itineraries/compostela-tambre-lenguelle/descripcion-de-la-ruta.asp",srcLabel:"Route description",mq:"Estación de Trasmonte, Oroso"},
-   {name:"Bosque da Fervenza · O Corgo",photo:"fervenza",ll:[42.88840,-7.52158],opt:"Swap for Ézaro",km:3.5,gain:null,type:"Linear",time:"~2 h",
+   {name:"Bosque da Fervenza · O Corgo",photo:"fervenza",ll:[42.88840,-7.52158],opt:"Whole-day swap",km:3.5,gain:null,type:"Linear",time:"~2 h",
     text:"A riverside forest of alder and ash that the Miño floods most winters, one of the few of its kind left in Europe, with an old mill by the Casa Grande da Fervenza. The official path is flat and easy, about 3.5 km from the Casa Grande along the river, so walk it at the older two's pace. About 1 h 30 from camp, the same drive as Ézaro, so take it instead of the waterfall, not as well. Late November is when the floods start and the route follows the river level, so parts may be under water. Check with the Casa Grande or the O Corgo council the day before, and turn back wherever the path goes under.",
     src:"https://terrasdomino.deputacionlugo.org/wp-content/uploads/2023/09/ruta_fervenza.pdf",srcLabel:"Route sheet (PDF)",mq:"Casa Grande da Fervenza, O Corgo",
     warn:[["Flooding & river level","https://www.turismo.gal/que-facer/bosques-de-galicia/bosque-da-fervenza"]]}],
-  notes:[["warn","Route filter","Ignore Wikiloc routes that climb Monte Pindo or A Moa. They are steep and rocky granite, not dog terrain."],["surf","Surf slot B","Book the session on whichever day (Sun or Tue) has the better forecast. This is the easiest day to skip if you'd rather rest everyone."]],shops:{intro:"If you choose Cecebre, Outlet Altamira is in the same municipality (Cambre), a few minutes away. The A Coruña outlet is the other option.",list:["altamira","coruna"]},
+  notes:[["moss","If you swap to Ézaro","Ignore Wikiloc routes that climb Monte Pindo or A Moa. They are steep and rocky granite, not dog terrain."]],shops:{intro:"Outlet Altamira is in the same municipality (Cambre), a few minutes away. The A Coruña outlet is the other option.",list:["altamira","coruna"]},
+  surf:{b:"bastiagueiro",win:["13:50","16:30"],from:["Cecebre",17,11],plan:{faces:[0.7,1.0],wind:"cross-offshore",slot:"14:00"}},
   sleep:NEVEDAS,night:"Night 5 of 5"},
  {date:"2026-11-25",n:6,wx:"lamas",base:"road",title:"Mills & redwoods on the way",lede:"Pack down, then two short forest stops near Pontevedra (Barosa's waterfall and mills, then Poio's sequoias), and reach the mountains with daylight to spare.",
   drive:"As Nevedas → Barro (Río Barosa) about 1 h 15 · Barosa → Poio about 15 min · Poio → Melgaço about 1 h 20 · Melgaço → Lamas de Mouro about 25 min. You gain an hour at the border.",
@@ -130,10 +134,11 @@ const DAYS=[
   notes:[],sleep:null,night:"Home · Óbidos"}
 ];
 const CHOICES=[
- ["keep","Fragas do Eume · Encomendeiros","Kept as the Galicia centrepiece, moved to Monday for quieter parking. A short version (4–6 km) is ready if the dogs are tired."],
+ ["new","Afternoon surf, Saturday to Tuesday","One 70-minute session a day (changing plus an hour in the water): Area Maior, Sabón, Caión and Bastiagueiro. They replace the Razo surf-school slots. The app picks the best time in each window from the live tide, swell and wind."],
+ ["keep","Fragas do Eume","Kept as the Galicia centrepiece on Monday, now the short Santa Cristina–Caaveiro version (4–6 km) so the afternoon is free for surf at Caión. The full 11.8 km circuit is the fallback if the surf is off."],
  ["keep","Refuxio de Verdes + Fervenza de San Paio","Kept and paired on one low-load day close to camp."],
  ["keep","Rego dos Muiños & Castro de Borneiro","Kept on Saturday. It's 35 min from camp and splits neatly at the castro."],
- ["keep","Fervenza do Ézaro","Kept as the easy day after the Eume, flat and under 1 km."],
+ ["opt","Fervenza do Ézaro","Now the Tuesday swap if you skip the surf: flat, under 1 km, about 1 h 20 from camp."],
  ["move","Bosque de Colón (Poio)","Moved from day 1 to the transfer day. Poio sits right on the route south, so it breaks the drive."],
  ["move","Mata do Buçaco","Moved to the drive home. It's about 15 min off the A1 and breaks a 5 h drive at the right point."],
  ["keep","Mata de Albergaria · Geira","Kept because it's one of the finest forests in the park. Shortened to the 4.5 km Portela do Homem circuit, which is closer to you than your 10.5 km Vilarinho track. About 1 h 15 each way."],
@@ -144,11 +149,11 @@ const CHOICES=[
  ["new","Santuário da Peneda","Added as a flat afternoon visit."],
  ["new","Río Barosa (Barro)","Added to the transfer day before Bosque de Colón: 2.1 km of mills, oaks and a 30 m waterfall, 15 min from Poio."],
  ["new","Fervenza do Belelle (Neda)","Added as an add-on to Monday if you do the short Eume version: a 40 m+ waterfall, about 4 km there and back."],
- ["opt","Fraga de Cecebre (Cambre)","Optional on Tuesday instead of Ézaro, if you'd rather drive less. Only a small part of the old forest is left, so keep expectations modest."],
+ ["new","Fraga de Cecebre (Cambre)","Tuesday's walk, paired with the surf at Bastiagueiro 17 min away. Only a small part of the old forest is left, so keep expectations modest."],
  ["opt","Fragas do Mandeo (Zarzo–Chelo)","Optional swap for Sunday if the dogs are full of energy: a 10.5 km riverside forest loop, or part of it from Chelo."],
- ["opt","El Corte Inglés outlets","Porriño as a 15-min stop on Friday's drive north. Then Altamira (Cambre) or A Coruña city on Saturday or Tuesday. Altamira pairs with the Cecebre option."],
+ ["opt","El Corte Inglés outlets","Porriño as a 15-min stop on Friday's drive north. Then Altamira (Cambre) or A Coruña city on Saturday or Tuesday. Altamira pairs with Tuesday's Cecebre walk."],
  ["opt","Vía Verde Tambre–Lengüelle","Greenway option for Tuesday: flat old railway through oak woods by the Lengüelle river, about 50 min from camp. A better forest than Cecebre."],
- ["opt","Bosque da Fervenza (O Corgo)","Optional swap for Ézaro on Tuesday: a flat 3.5 km path through a rare forest that the Miño floods, about 1 h 30 from camp. Late November floods may close parts of it, so check the day before."],
+ ["opt","Bosque da Fervenza (O Corgo)","Optional whole-day swap on Tuesday: a flat 3.5 km path through a rare forest that the Miño floods, about 1 h 30 from camp. Late November floods may close parts of it, so check the day before."],
  ["opt","Ecopista do Rio Minho (Valença)","Greenway option for the transfer day: walk the old riverside railway at Valença instead of the short Poio loop."],
  ["opt","Passadiços do Rio Minho (Melgaço)","Thursday afternoon option instead of Castro Laboreiro village: flat riverside boardwalks, 25 min from camp."],
  ["opt","Ecovia do Vez (Sistelo)","Saturday swap: river paths below Sistelo's terraces, about 50 min from camp."],
@@ -156,6 +161,18 @@ const CHOICES=[
  ["opt","Termas de Prexigueiro (Ribadavia)","Optional Thursday evening: a paid Japanese-style circuit of outdoor hot pools, about 1 h 10 from camp and open late."],
  ["opt","Lagoas de Travanca (Mezio)","Optional swap for Saturday. It's a good walk (5.1 km, 149 m), but it's high plateau and lagoons rather than forest, and about 1 h 15 from Lamas."]
 ];
+/* Surf beaches. face = the direction the beach looks out to sea (from OSM coastline), shelter = extra size reduction, tide = when it works best.
+   Why/parking notes come from the Gemini session plan. */
+const SURF={
+ areamaior:{name:"Praia de Area Maior",area:"Malpica",ll:[43.32345,-8.81207],face:352,shelter:1,tide:"falling",photo:"areamaior",q:"Praia de Area Maior, Malpica de Bergantiños",
+  why:"The town headland blocks a southerly or south-westerly chop, and the bay works best on a falling mid-tide.",park:"Use the beachfront road and the promenade parking along the bay. Avoid the narrow streets by the fishing port."},
+ sabon:{name:"Playa de Sabón",area:"Arteixo",ll:[43.3297,-8.5064],face:293,shelter:1,tide:"any",photo:"sabon",q:"Praia de Sabón, Arteixo",
+  why:"Steeper, punchier peaks than the beaches nearby, and it works at all tides.",park:"Wide, flat, free parking right behind the beach."},
+ caion:{name:"Praia de Caión",area:"A Laracha",ll:[43.3164,-8.6091],face:315,shelter:1,tide:"high",photo:"caion",q:"Praia de Caión, A Laracha",
+  why:"A punchy right-hander by the port, five minutes from camp. Surf around high tide so the rocks stay covered.",park:"Easy parking right by the beach."},
+ bastiagueiro:{name:"Praia de Bastiagueiro",area:"Oleiros",ll:[43.3410,-8.3630],face:347,shelter:.7,tide:"rising",photo:"bastiagueiro",q:"Praia de Bastiagueiro, Oleiros",
+  why:"Inside the Ría de A Coruña, it turns a big open-ocean swell into smaller, cleaner rights. Best on the push towards high tide.",park:"Large car park across the main road. The pay meters by the skate area (12:00–20:00) are strictly enforced, so check the signs."}
+};
 const SOAKS={
  lobios:{tag:"Free · on Friday's route",name:"Termas de Lobios · Río Caldo pools",addr:"Os Baños, Río Caldo, Lobios (Ourense), next to the Caldaria hotel spa",
   info:"Free open-air hot pools beside the river. Guides say they're open at any hour, but I couldn't find an official 2026 page, and there's been talk of making them paid. If they're closed, the Caldaria hotel spa next door is the paid fallback. Only a snack bar nearby, so bring food. Dogs stay on lead, away from the pools.",
@@ -178,7 +195,7 @@ const OUTLETS={
 /* Checklists. Item: [text, note, old tick position]. "keep" lists only add items at the end, so old positions still match. */
 const LISTS=[
  {id:"pre",keep:1,title:"Before you go",sub:"Finish by Friday 20 Nov, 14:00",items:[
-  ["Confirm the bodyboard session day and time with the school","Sun 22 or Tue 24 fit best"],["Check MeteoGalicia + IPMA 3 days out and swap days if needed",""],
+  ["Check MeteoGalicia + IPMA 3 days out and swap days if needed",""],
   ["Download all trail tracks for offline use","Wikiloc offline needs Premium, or save Google Maps offline areas for Carballo, Pontedeume and Peneda"],
   ["Save the vet numbers and Fidelidade policy number in contacts","Info tab has them"],["Confirm with Fidelidade that Vetcare covers Spain on your policy",""],
   ["Van: tyre pressures for a full load, oil, coolant, washer fluid, wipers, lights",""],
@@ -233,8 +250,8 @@ const LISTS=[
   ["Dry bag for wet swimwear and ponchos",""],["Dry warm layer for afterwards",""],["Thermos filled that morning + snacks","Only a snack bar at Lobios"],
   ["Drinking water","Hot pools dehydrate you"],["Small padlock","Prexigueiro has lockers, but I couldn't confirm whether you need your own lock"],
   ["Leave silver jewellery at camp","Sulphur water tarnishes it"],["Dog blankets and water in the van","The dogs wait there at Prexigueiro"]]},
- {id:"surf",title:"Bodyboard",sub:"One 1.5–2 h session in Galicia",items:[
-  ["Bodyboard + leash","","surf:0"],["Fins + fin socks","","surf:1"],["Winter wetsuit (+ boots, hood, gloves)","Galician water in late November is cold","surf:2"],
+ {id:"surf",title:"Bodyboard",sub:"Four afternoon sessions in Galicia, Sat–Tue",items:[
+  ["Bodyboard + leash","","surf:0"],["Fins + fin socks","","surf:1"],["Winter wetsuit (+ boots, hood, gloves)","The water is about 16° in late November","surf:2"],
   ["Surf poncho","","surf:3"],["Bag for the wet suit","","surf:4"],["Spare water to rinse off the salt",""]]},
  {id:"hikeday",keep:1,title:"Every hike morning",sub:"Tick, walk, clear tomorrow",items:[
   ["Today's track open and downloaded",""],["Water for 2 people + 4 dogs",""],["Leads, poo bags, collapsible bowl",""],
@@ -256,7 +273,6 @@ const LISTS=[
 /* Other places for the map: [kind, name, [lat,lon], maps query, note] */
 const PLACES=[
  ["home","Home · Óbidos",[39.36195,-9.15715],"Óbidos","Start and finish"],
- ["surf","Praia de Razo",[43.29041,-8.70621],"Praia de Razo, Carballo","Bodyboard slot, Sun 22 or Tue 24"],
  ["shop","Lidl Carballo",[43.22208,-8.68502],"Lidl Carballo","Big shop, Sat 21"],
  ["shop","Intermarché Melgaço",[42.10934,-8.26153],"Intermarché Melgaço","Shop on the way in, Wed 25"]
 ];
@@ -306,4 +322,4 @@ const ROUTES={"d1":[[39.3619,-9.1561],[39.3657,-9.1579],[39.362,-9.1539],[39.364
 /* Typical 20–29 Nov weather, Open-Meteo archive 2016–2025 */
 const CLIMATE={nevedas:{hi:14,lo:10,wet:59,frost:0},lamas:{hi:10,lo:4,wet:54,frost:8}};
 /* Photo credits, Wikimedia Commons: [author, licence, page] */
-const CREDITS={"albergaria": ["Pedro Nuno Caetano", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Portela_do_Homem-Mata_da_Albergaria_II.jpg"], "barosa": ["Xosema", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Fervenza_do_rio_Barosa_-_Cascada_del_rio_Barosa_-_01.jpg"], "belelle": ["Juanky Pamies", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Fervenza_do_Belelle,_Neda.jpg"], "castro": ["amaianos from Galicia", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Castro_de_Borneiro_(5641172946).jpg"], "cecebre": ["Nemigo", "CC0", "https://commons.wikimedia.org/wiki/File:Rio_Mero_Cambre_6373alhdzwGL.jpg"], "colon": ["Mixigodo", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Bosque_de_sequoias_de_Poio_(vista_xeral_dende_a_parte_inferior_do_bosque).jpg"], "ecominho": ["ines s.", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Ecopista_do_Minho_cycle_road_(53480051747).jpg"], "eume": ["Miguel Branco", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:PN_Fragas_do_Eume_48.jpg"], "eumeRiver": ["Marshallhenrie", "CC BY 4.0", "https://commons.wikimedia.org/wiki/File:Fragas_do_Eume_-_Eume_River.jpg"], "ezaro": ["Velogga", "CC0", "https://commons.wikimedia.org/wiki/File:Fervenza_de_Ezaro.jpg"], "fervenza": ["Riciños", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:FervenzaMi%C3%B1o2.jpg"],"laboreiro": ["Krzysztof Golik", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Castle_of_Castro_Laboreiro_08.jpg"], "lagarto": ["Luaralu", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Natureza1.jpg"], "meadinha": ["Luis Afonso", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Lagoa_da_Meadinha.jpg"],"lamas": ["Pedro from Maia (Porto), Portugal", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Trilho_Interpretativo_de_Lamas_de_Mouro_XIII_(50504957313).jpg"], "mandeo": ["Breogan Prego", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:Rio_Mandeo_por_Chelo.jpg"], "melgaco": ["Halley Oliveira from Guimarães, Portugal", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:Rio_Minho_em_Melga%C3%A7o_(48704978421).jpg"], "peneda": ["Krzysztof Golik", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Our_Lady_of_Peneda_sanctuary_03.jpg"], "razo": ["Iago Casabiell González", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Praia_de_Razo_11II2015_02.jpg"], "sanpaio": ["amaianos from Galicia", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Fervenza_de_Entrecruces,_Carballo_(4467017047).jpg"], "sistelo": ["Joseolgon", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Sistelo_(3).jpg"], "tambre": ["DamiFM", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:R%C3%ADo_Leng%C3%BCelle.jpg"]};
+const CREDITS={"areamaior": ["Jorganes", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Praia_de_Area_Maior-Malpica_de_Berganti%C3%B1os.jpg"], "bastiagueiro": ["MaRiA-89", "CC BY 3.0", "https://commons.wikimedia.org/wiki/File:Surfistas_en_la_Playa_de_Bastiagueiro_-_panoramio.jpg"], "caion": ["Mario Sánchez", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:Praia_de_Cai%C3%B3n,_A_Laracha,_Galiza.jpg"], "sabon": ["Iago Casabiell González", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Praia_de_Sab%C3%B3n_17V2016.jpg"], "albergaria": ["Pedro Nuno Caetano", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Portela_do_Homem-Mata_da_Albergaria_II.jpg"], "barosa": ["Xosema", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Fervenza_do_rio_Barosa_-_Cascada_del_rio_Barosa_-_01.jpg"], "belelle": ["Juanky Pamies", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Fervenza_do_Belelle,_Neda.jpg"], "castro": ["amaianos from Galicia", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Castro_de_Borneiro_(5641172946).jpg"], "cecebre": ["Nemigo", "CC0", "https://commons.wikimedia.org/wiki/File:Rio_Mero_Cambre_6373alhdzwGL.jpg"], "colon": ["Mixigodo", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Bosque_de_sequoias_de_Poio_(vista_xeral_dende_a_parte_inferior_do_bosque).jpg"], "ecominho": ["ines s.", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Ecopista_do_Minho_cycle_road_(53480051747).jpg"], "eume": ["Miguel Branco", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:PN_Fragas_do_Eume_48.jpg"], "eumeRiver": ["Marshallhenrie", "CC BY 4.0", "https://commons.wikimedia.org/wiki/File:Fragas_do_Eume_-_Eume_River.jpg"], "ezaro": ["Velogga", "CC0", "https://commons.wikimedia.org/wiki/File:Fervenza_de_Ezaro.jpg"], "fervenza": ["Riciños", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:FervenzaMi%C3%B1o2.jpg"],"laboreiro": ["Krzysztof Golik", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Castle_of_Castro_Laboreiro_08.jpg"], "lagarto": ["Luaralu", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Natureza1.jpg"], "meadinha": ["Luis Afonso", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Lagoa_da_Meadinha.jpg"],"lamas": ["Pedro from Maia (Porto), Portugal", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Trilho_Interpretativo_de_Lamas_de_Mouro_XIII_(50504957313).jpg"], "mandeo": ["Breogan Prego", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:Rio_Mandeo_por_Chelo.jpg"], "melgaco": ["Halley Oliveira from Guimarães, Portugal", "CC BY-SA 2.0", "https://commons.wikimedia.org/wiki/File:Rio_Minho_em_Melga%C3%A7o_(48704978421).jpg"], "peneda": ["Krzysztof Golik", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Our_Lady_of_Peneda_sanctuary_03.jpg"], "razo": ["Iago Casabiell González", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Praia_de_Razo_11II2015_02.jpg"], "sanpaio": ["amaianos from Galicia", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Fervenza_de_Entrecruces,_Carballo_(4467017047).jpg"], "sistelo": ["Joseolgon", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Sistelo_(3).jpg"], "tambre": ["DamiFM", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:R%C3%ADo_Leng%C3%BCelle.jpg"]};

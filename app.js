@@ -138,12 +138,13 @@ function dayDetail(d,opts={}){
   const bcls=d.base==="gal"?"gal":d.base==="pen"?"pen":"road";
   return `${opts.hero===false?"":`<div class="dayhero${opts.nav===false?" compact":""}"><img src="${img(cov)}" alt="">${nav}
     <div class="in"><span class="when">${d.date===T?'<i class="wm"></i>Today, ':""}${f.W} ${f.d} November · Day ${d.n} of 10</span><h2>${esc(d.title)}</h2></div></div>
-  <div class="facts-row"><span class="fact ${bcls}">${baseLabel(d.base)}</span>${km?`<span class="fact">${km.toFixed(1)} km walking</span>`:""}${d.notes.some(n=>n[0]==="surf")?'<span class="fact">Surf slot</span>':""}</div>`}
+  <div class="facts-row"><span class="fact ${bcls}">${baseLabel(d.base)}</span>${km?`<span class="fact">${km.toFixed(1)} km walking</span>`:""}${d.surf?'<span class="fact">Surf</span>':""}</div>`}
   <p class="lede">${esc(d.lede)}</p>
   ${opts.hero===false?"":wxCard(d)}
   <div class="drive">${IC.car}<div><b>Driving</b>${esc(d.drive)}</div></div>
   <div class="stack"><h3 class="h3">The day</h3><ul class="tl">${d.timeline.map(([t,s])=>`<li><span class="t">${esc(t)}</span><span>${esc(s)}</span></li>`).join("")}</ul></div>
   ${main.length?`<div class="stack"><h3 class="h3">${main.length>1?"The walks":"The walk"}</h3>${main.map(([h,k])=>hikeHTML(h,d,k)).join("")}</div>`:""}
+  ${d.surf&&opts.hero!==false?`<div class="stack"><h3 class="h3">Surf</h3><div class="tiles">${surfTile(d)}</div></div>`:""}
   ${d.extra?`<div class="stack"><h3 class="h3">Also today</h3>${d.extra.map(extraHTML).join("")}</div>`:""}
   ${opt.length?`<div class="stack"><h3 class="h3">If you want to swap</h3>${opt.map(([h,k])=>hikeHTML(h,d,k)).join("")}</div>`:""}
   ${d.notes.map(([k,t,s])=>`<div class="note ${k}">${noteIcon(k)}<b>${esc(t)}</b><span>${esc(s)}</span></div>`).join("")}
@@ -218,11 +219,13 @@ function lightTile(d,s,now){
   else if(now<s.set)head="Sunset in "+dur(s.set-now);
   else if(now<s.last)head="Last light in "+dur(s.last-now);
   else head="Dark now";
-  const out=d.outBy?toMin(d.outBy):null, band=d.band?[toMin(d.band[0]),toMin(d.band[1]),d.band[2]]:null;
+  const out=d.outBy?toMin(d.outBy):null, bands=[];
+  if(d.band)bands.push([toMin(d.band[0]),toMin(d.band[1]),d.band[2]]);
+  if(d.surf){const st=surfInfo(d).start;bands.push([st,st+SLOT,"surf"])}
   return `<div class="tile wide light${now!=null&&now>=s.set?" late":""}"><div class="row"><span class="lab">Light ${now==null?"that day":"today"}</span><b class="num">${head}</b></div>
    <div class="strip" role="img" aria-label="First light ${clock(s.first)}, sunrise ${clock(s.rise)}, sunset ${clock(s.set)}, last light ${clock(s.last)}${out?`. Out by ${d.outBy}`:""}">
     <i class="nt"></i><i class="tw" style="${w(s.first,s.rise)}"></i><i class="dy" style="${w(s.rise,s.set)}"></i><i class="tw" style="${w(s.set,s.last)}"></i>
-    ${band?`<i class="band" style="${w(band[0],band[1])}"></i><span class="ml band-l" style="left:${pc(band[0])}">${esc(band[2])}</span>`:""}
+    ${bands.map(bd=>`<i class="band" style="${w(bd[0],bd[1])}"></i><span class="ml band-l" style="left:${pc(bd[0])}">${esc(bd[2])}</span>`).join("")}
     ${out?`<i class="mk out" style="left:${pc(out)}"></i><span class="ml out-l" style="left:${pc(out)}">out ${d.outBy}</span>`:""}
     ${now!=null&&now>a&&now<b?`<i class="mk now" style="left:${pc(now)}"></i><span class="ml now-l" style="left:${pc(now)}">now</span>`:""}
    </div>
@@ -236,10 +239,149 @@ function weatherTile(d){
   if(w.fc&&w.gust>=45)bits.push("gusts "+w.gust+" km/h");
   return `<div class="tile${cold||wet?" cool":""}"><span class="lab">${title}</span><span class="big num">${wxIcon(w.code)}${w.hi}° <small>${w.lo}°</small></span><span class="sm">${bits.join(" · ")}${w.fc?"":" (forecast not out yet)"}</span></div>`;
 }
+/* ================= Surf (Open-Meteo marine + wind, no key) ================= */
+const SURFKEY="fw2026-surf", SLOT=70; // 70 min: changing plus an hour in the water
+let SURFWX=null;try{SURFWX=JSON.parse(localStorage.getItem(SURFKEY)||"null")}catch(e){}
+const surfDays=()=>DAYS.filter(d=>d.surf);
+async function loadSurf(){
+  const days=surfDays(),first=days[0].date,last=days[days.length-1].date;
+  if(SURFWX&&Date.now()-SURFWX.ts<WX_MAX_AGE)return;
+  if(diff(T,first)>14||T>last)return;
+  const keys=[...new Set(days.map(d=>d.surf.b))], ll=keys.map(k=>SURF[k].ll);
+  const q=`latitude=${ll.map(p=>p[0]).join(",")}&longitude=${ll.map(p=>p[1]).join(",")}&start_date=${first}&end_date=${last}&timezone=Europe%2FMadrid&hourly=`;
+  try{
+    const [m,w]=await Promise.all([
+      fetch("https://marine-api.open-meteo.com/v1/marine?"+q+"swell_wave_height,swell_wave_period,swell_wave_direction,sea_level_height_msl,sea_surface_temperature").then(r=>r.ok?r.json():null),
+      fetch("https://api.open-meteo.com/v1/forecast?"+q+"wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation_probability,temperature_2m").then(r=>r.ok?r.json():null)]);
+    if(!m||!w)return;
+    const ma=[].concat(m),wa=[].concat(w),data={};
+    keys.forEach((k,i)=>data[k]=Object.assign({},ma[i].hourly,wa[i].hourly));
+    SURFWX={ts:Date.now(),data};try{localStorage.setItem(SURFKEY,JSON.stringify(SURFWX))}catch(e){}
+    route(true);
+  }catch(e){}
+}
+const angDiff=(a,b)=>{const x=((a-b)%360+360)%360;return x>180?360-x:x};
+const COMPASS=["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"], compass=a=>COMPASS[Math.round(a/22.5)%16];
+function windClass(face,from,speed){ // face = where the beach looks out to sea; offshore wind blows from the land
+  if(speed<8)return"light";
+  const x=angDiff(from,(face+180)%360);
+  return x<=30?"offshore":x<=60?"cross-offshore":x<=120?"cross-shore":x<=150?"cross-onshore":"onshore";
+}
+const WSCORE={light:2.6,offshore:3,"cross-offshore":2.4,"cross-shore":1.2,"cross-onshore":.4,onshore:-.6};
+/* Breaking face height, roughly: swell height × a period factor × how squarely the swell hits the beach × shelter */
+function faceOf(b,H,Tp,dir){
+  if(H==null)return null;
+  const k=.7+.05*Math.max(5,Math.min(16,Tp||8)), af=.4+.6*Math.max(0,Math.cos(angDiff(dir==null?b.face:dir,b.face)*Math.PI/180));
+  return H*k*af*b.shelter;
+}
+const r1=x=>(Math.round(x*10)/10).toFixed(1), faceRange=c=>[r1(c*.85),r1(c*1.15)];
+const faceWords=c=>c<.5?"knee to waist high":c<.8?"waist high":c<1.1?"chest high":c<1.4?"chest to head high":c<1.8?"head high":c<2.3?"head high to overhead":"well overhead";
+const TIDEPREF={any:"Works at all tides.",high:"Best around high tide.",rising:"Best on the push towards high.",falling:"Best on a falling mid-tide."};
+function surfInfo(d){
+  const s=d.surf, b=SURF[s.b], sun=sunOf(d), win=[toMin(s.win[0]),toMin(s.win[1])], base={d,s,b,sun,win,plan:s.plan,live:false,start:toMin(s.plan.slot)};
+  const h=SURFWX&&SURFWX.data&&SURFWX.data[s.b], i0=h?h.time.indexOf(d.date+"T00:00"):-1;
+  if(i0<0)return base;
+  const at=(k,m)=>{const x=m/60,i=Math.floor(x),f=x-i,a=h[k][i0+i],c=h[k][i0+i+1];return a==null?c:c==null?a:a+(c-a)*f};
+  const near=(k,m)=>h[k][i0+Math.round(m/60)];
+  const sl=h.sea_level_height_msl.slice(i0,i0+24), ok=sl.filter(v=>v!=null);
+  if(ok.length<20)return base;
+  const lo=Math.min(...ok),hi=Math.max(...ok),ext=[];
+  for(let i=1;i<23;i++){const a=sl[i-1],c=sl[i],e=sl[i+1];if(a==null||c==null||e==null)continue;
+    if((c>=a&&c>e)||(c<=a&&c<e)){const den=a-2*c+e;ext.push({hi:c>a,m:Math.round((i+(den?(a-e)/(2*den):0))*60)})}}
+  const cond=m=>{const ws=at("wind_speed_10m",m),wd=near("wind_direction_10m",m),lvl=at("sea_level_height_msl",m);
+    return{H:at("swell_wave_height",m),Tp:at("swell_wave_period",m),c:faceOf(b,at("swell_wave_height",m),at("swell_wave_period",m),near("swell_wave_direction",m)),
+      ws,wd,g:at("wind_gusts_10m",m),pp:at("precipitation_probability",m),wc:windClass(b.face,wd,ws),
+      h01:(lvl-lo)/((hi-lo)||1),slope:at("sea_level_height_msl",m+30)-at("sea_level_height_msl",m-30)}};
+  const score=x=>{let sc=WSCORE[x.wc]-(x.ws>25?1.5:x.ws>18?.7:0)-x.ws/40-(x.g>50?1:0)-(x.pp||0)/100;
+    sc+=b.tide==="high"?1.5*x.h01:b.tide==="rising"?(x.slope>0?1+x.h01:0):b.tide==="falling"?(x.slope<0?1.5*(1-Math.abs(x.h01-.5)*2):0):.5;
+    return sc+(x.c!=null&&x.c>=.6&&x.c<=2.2?1:-1)};
+  const latest=Math.max(win[0],Math.min(win[1],sun.set-30)-SLOT);
+  let best=null;
+  for(let m=win[0];m<=latest;m+=10){const x=cond(m+SLOT/2),sc=score(x);if(!best||sc>best.sc+.05)best={m,sc,x}}
+  const start=best.m;
+  return Object.assign(base,{live:true,start,x:best.x,ext,lo,hi,sl,cond,sst:at("sea_surface_temperature",start),air:at("temperature_2m",start)});
+}
+function surfAlerts(I){
+  if(!I.live)return{major:false,list:[]};
+  const x=I.x,[pl,ph]=I.plan.faces,pm=(pl+ph)/2,list=[];let major=false;
+  if(x.c!=null&&Math.abs(x.c-pm)/pm>=.35){major=true;const fr=faceRange(x.c);list.push(`Waves ${x.c>pm?"bigger":"smaller"} than planned: ${fr[0]}–${fr[1]} m faces (planned ${pl.toFixed(1)}–${ph.toFixed(1)} m).`)}
+  if(WSCORE[x.wc]<WSCORE[I.plan.wind]-1){major=true;list.push(`Wind now ${x.wc} (planned ${I.plan.wind}).`)}
+  if(x.c!=null&&x.c<.4){major=true;list.push("Close to flat.")}
+  if(x.c!=null&&x.c>2.6){major=true;list.push("Big. Only if you feel confident.")}
+  if(Math.abs(I.start-toMin(I.plan.slot))>=60)list.push(`Best time moved to ${clock(I.start)} (planned ${I.plan.slot}).`);
+  if(x.g>=50)list.push(`Gusts up to ${Math.round(x.g)} km/h.`);
+  if(x.pp>=70)list.push(`${Math.round(x.pp)}% chance of rain.`);
+  return{major,list};
+}
+function tideText(I){
+  if(!I.live)return TIDEPREF[I.b.tide];
+  const mid=I.start+SLOT/2, hiNear=I.ext.filter(e=>e.hi).sort((a,c)=>Math.abs(a.m-mid)-Math.abs(c.m-mid))[0];
+  if(hiNear&&Math.abs(hiNear.m-mid)<=45)return`High ~${clock(hiNear.m)}, right in your hour. ${TIDEPREF[I.b.tide]}`;
+  return`Tide ${I.x.slope>0?"rising":"falling"}${hiNear?` (high ~${clock(hiNear.m)})`:""}. ${TIDEPREF[I.b.tide]}`;
+}
+const hhmm=ts=>new Date(ts).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"});
+let HERE={};
+function fromText(I){const r=HERE[I.s.b];if(r&&Date.now()-r.ts<36e5)return`<b>${r.min} min</b> · ${r.km} km from you`;const f=I.s.from;return`About <b>${f[1]} min</b> · ${f[2]} km from ${esc(f[0])}`}
+function routeFromHere(k,btn){
+  if(!navigator.geolocation)return;
+  if(btn){btn.disabled=true;btn.textContent="Finding you…"}
+  navigator.geolocation.getCurrentPosition(async p=>{
+    const b=SURF[k];
+    try{const r=await fetch(`https://router.project-osrm.org/route/v1/driving/${p.coords.longitude},${p.coords.latitude};${b.ll[1]},${b.ll[0]}?overview=false`).then(x=>x.json());
+      const rt=r.routes&&r.routes[0];if(rt){HERE[k]={min:Math.round(rt.duration/60*1.1),km:Math.round(rt.distance/1000),ts:Date.now()};route(true)}}
+    catch(e){if(btn){btn.disabled=false;btn.textContent="Couldn't get a route, try again"}}
+  },()=>{if(btn){btn.disabled=false;btn.textContent="Location not allowed"}},{maximumAge:6e5,timeout:15000});
+}
+const IC_WIND='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h11a3 3 0 10-3-3M3 12h15a3 3 0 11-3 3M3 16h7"/></svg>';
+const IC_TIDE='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 15c3-5 6-5 9 0s6 5 9 0"/><path d="M3 20c3-5 6-5 9 0s6 5 9 0"/></svg>';
+function surfTile(d){
+  const I=surfInfo(d), x=I.x, al=surfAlerts(I), fr=x&&x.c!=null?faceRange(x.c):I.plan.faces.map(v=>v.toFixed(1)), mid=(+fr[0]+ +fr[1])/2;
+  const cap=s=>s[0].toUpperCase()+s.slice(1);
+  return `<a class="tile wide surf" href="#surf${d.n}">
+   <span class="row"><span class="lab">Surf · ${clock(I.start)}–${clock(I.start+SLOT)}</span><span class="sm">1 h in the water + changing</span></span>
+   <b class="mid">${esc(I.b.name)}</b>
+   <span class="sgrid"><span class="span2"><b class="big num">${fr[0]}–${fr[1]} m</b><small>faces · ${faceWords(mid)}</small></span><span><b class="big num">${x?Math.round(x.Tp)+" s":"–"}</b><small>period</small></span><span><b class="big num">${I.live&&I.sst!=null?Math.round(I.sst)+"°":"–"}</b><small>water</small></span></span>
+   <span class="line">${IC_WIND}<span>${x?`<b>${cap(x.wc)}</b>, ${Math.round(x.ws)} km/h${x.g>=40?`, gusts ${Math.round(x.g)}`:""}`:`Planned: <b>${esc(I.plan.wind)}</b>`}</span></span>
+   <span class="line">${IC_TIDE}<span>${tideText(I)}</span></span>
+   ${I.live?"":`<span class="alert">Planned figures. The live forecast appears about two weeks ahead.</span>`}
+   ${al.list.length?`<span class="alert${al.major?" major":""}">${al.major?"Changed since planning: ":""}${esc(al.list[0])}${al.list.length>1?` (+${al.list.length-1} more)`:""}</span>`:""}
+   <span class="row"><span class="sm num">${fromText(I)}${I.live?" · updated "+hhmm(SURFWX.ts):""}</span><span class="go">Details ${IC.r}</span></span></a>`;
+}
+function tideChart(I,now){
+  const a=8*60,b=20*60,W=350,H=140,x=m=>10+(m-a)/(b-a)*330,lo=Math.min(...I.sl.slice(8,21)),hi=Math.max(...I.sl.slice(8,21)),y=v=>14+(hi-v)/((hi-lo)||1)*100;
+  const pts=[];for(let hr=8;hr<=20;hr++)if(I.sl[hr]!=null)pts.push([x(hr*60),y(I.sl[hr])]);
+  const line=pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ");
+  const ticks=[8,10,12,14,16,18,20].map(hr=>`<text x="${x(hr*60)}" y="134" font-size="11" fill="currentColor" opacity=".7" text-anchor="middle">${String(hr).padStart(2,"0")}</text>`).join("");
+  const ex=I.ext.filter(e=>e.m>=a&&e.m<=b).map(e=>`<text x="${Math.max(32,Math.min(318,x(e.m)))}" y="${e.hi?10:126}" font-size="10.5" font-weight="700" fill="var(--atl)" text-anchor="middle">${e.hi?"high":"low"} ${clock(e.m)}</text>`).join("");
+  return `<svg class="tidechart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Tide from 08:00 to 20:00. ${I.ext.map(e=>(e.hi?"High ":"Low ")+clock(e.m)).join(", ")}. Your session ${clock(I.start)} to ${clock(I.start+SLOT)}.">
+   <rect x="${x(I.start)}" y="14" width="${x(I.start+SLOT)-x(I.start)}" height="104" rx="5" class="tc-you"></rect>
+   <path d="${line} L${pts[pts.length-1][0]},118 L${pts[0][0]},118 Z" class="tc-fill"></path><path d="${line}" class="tc-line"></path>
+   ${now!=null&&now>a&&now<b?`<line x1="${x(now)}" x2="${x(now)}" y1="14" y2="118" class="tc-now"></line>`:""}
+   ${I.sun.set<b?`<line x1="${x(I.sun.set)}" x2="${x(I.sun.set)}" y1="14" y2="118" class="tc-sun"></line>`:""}
+   <line x1="10" x2="340" y1="118" y2="118" class="tc-axis"></line>${ticks}${ex}</svg>`;
+}
+function renderSurf(d){
+  const I=surfInfo(d), b=I.b, x=I.x, al=surfAlerts(I), fr=x&&x.c!=null?faceRange(x.c):I.plan.faces.map(v=>v.toFixed(1)), f=fd(d.date), c=CREDITS[b.photo];
+  const now=d.date===T?nowIn("es").min:null, after=I.sun.set-(I.start+SLOT);
+  let hours="";
+  if(I.live){for(let hr=Math.floor(I.start/60)-1;hr<=Math.floor((I.start+SLOT-1)/60);hr++){const z=I.cond(hr*60),zr=faceRange(z.c),inn=hr*60+59>=I.start&&hr*60<I.start+SLOT;
+    hours+=`<tr${inn?' class="in"':""}><th class="num">${String(hr).padStart(2,"0")}:00</th><td class="num">${zr[0]}–${zr[1]} m</td><td>${z.wc} · ${Math.round(z.ws)} km/h</td><td class="num">${Math.round(z.pp||0)}%</td></tr>`}}
+  $("#v-surf").innerHTML=`<a class="back" href="${d.date===T?"#today":"#day"+d.n}">${IC.l}${d.date===T?"Today":"Day "+d.n}</a>
+   <div class="surfhero"><img src="${img(b.photo)}" alt="${esc(b.name)}"><div class="in"><span class="lab">Surf · ${f.W} ${f.d} Nov · ${clock(I.start)}–${clock(I.start+SLOT)}</span><h2>${esc(b.name)}</h2></div>${c?`<a class="credit" href="${c[2]}" target="_blank" rel="noopener">Photo: ${esc(c[0])}</a>`:""}</div>
+   <p class="surfsub num">${esc(b.area)} · faces ${compass(b.face)} · ${fromText(I)}${I.live?" · updated "+hhmm(SURFWX.ts):""}</p>
+   ${I.live?`<div class="surfstatus${al.major?" chg":""}"><b>${al.major?"Changed since planning.":"On."}</b> ${al.list.length?esc(al.list.join(" ")):`${fr[0]}–${fr[1]} m faces, ${x.wc} wind.`}</div>`
+     :`<div class="surfstatus"><b>Planned.</b> The live forecast for this day isn't out yet. It appears here about two weeks ahead and refreshes every few hours when you're online.</div>`}
+   ${I.live?`<div class="panel tidepanel"><div class="row"><span class="lab">Tide</span><span class="num">${tideText(I)}</span></div>${tideChart(I,now)}</div>
+   <div class="panel"><table class="hrs"><thead><tr><th>Hour</th><th>Faces</th><th>Wind</th><th>Rain</th></tr></thead><tbody>${hours}</tbody></table></div>`:""}
+   <div class="sfacts"><span><b class="num">${fr[0]}–${fr[1]} m</b>faces · ${faceWords((+fr[0]+ +fr[1])/2)}</span><span><b class="num">${x?Math.round(x.Tp)+" s":"–"}</b>period</span><span><b class="num">${I.live&&I.sst!=null?Math.round(I.sst)+"°":"–"}</b>water</span><span><b class="num">${after>0?dur(after):"–"}</b>light after</span></div>
+   <div class="note"><i class="wm" aria-hidden="true"></i><b>From your Gemini plan</b><span>${esc(b.why)} Parking: ${esc(b.park[0].toLowerCase()+b.park.slice(1))}</span></div>
+   <p class="wx-note">Faces are an estimate from the swell height and period, and how squarely the swell hits this beach. Wind is labelled from the direction the beach faces (${compass(b.face)}).</p>
+   <div class="btns">${ext(maps(b.q),"Directions","solid")}<button class="btn" type="button" data-here="${d.surf.b}">Drive time from here</button></div>`;
+}
 function dayTiles(d){
   const s=sunOf(d), live=d.date===T, now=live?nowIn(s.tz==="Europe/Lisbon"?"pt":"es").min:null, f=fd(d.date);
   const main=d.hikes.filter(h=>!h.opt), km=kmOf(d), t0=d.timeline[0]||["",""], leave=/^Leave/i.test(t0[1]);
-  const walkLine=main.length?`${km.toFixed(1)} km · ${main.length>1?main.length+" walks":esc(main[0].time)}${main[0].gain?` · ${main[0].gain} m up`:""}`:esc(d.drive.split(" · ").slice(0,2).map((x,i)=>i?x.split(",")[0]:x).join(" · ").replace(/\.$/,""));
+  const walkLine=main.length?`${km.toFixed(1)} km · ${main.length>1?main.length+" walks":esc(main[0].time)}${main.length===1&&main[0].gain?` · ${main[0].gain} m up`:""}`:esc(d.drive.split(" · ").slice(0,2).map((x,i)=>i?x.split(",")[0]:x).join(" · ").replace(/\.$/,""));
   const hero=`<a class="tile wide photo" href="${main.length?maps(main[0].mq):"#day"+d.n}"${main.length?' target="_blank" rel="noopener"':""} aria-label="${main.length?"Directions to "+esc(main[0].name):"Day "+d.n+" details"}">
     <img src="${img(coverOf(d))}" alt=""><span class="row end"><span class="col"><span class="lab">${main.length?"The walk · "+esc(main[0].name.split(" · ")[0]):"Drive day"}</span><span class="sm">${walkLine}</span></span>
     ${t0[0]?`<span class="col r"><span class="lab">${leave?"Leave":"Starts"}</span><b class="big num">${esc(t0[0])}</b></span>`:""}</span></a>`;
@@ -250,7 +392,7 @@ function dayTiles(d){
   const warn=d.notes.find(n=>n[0]==="warn");
   return `<div class="tiles" id="tiles">
    <div class="t-head wide"><span class="lab">${f.W} ${f.d} Nov · Day ${d.n} of 10${d.clock?"":" · "+(s.tz==="Europe/Madrid"?"Spain":"Portugal")}</span><h1>${esc(d.title)}</h1></div>
-   ${hero}${lightTile(d,s,now)}${second}${weatherTile(d)}
+   ${hero}${d.surf?surfTile(d):""}${lightTile(d,s,now)}${second}${weatherTile(d)}
    ${d.soak?place(SOAKS,d.soak.list,d.soak.intro):""}${d.shops?place(OUTLETS,d.shops.list,d.shops.intro):""}
    ${warn?`<div class="tile wide warn"><span class="lab">Watch out</span><b class="mid">${esc(warn[1])}</b><span class="sm">${esc(firstSentence(warn[2]))}</span></div>`:""}
   </div>`;
@@ -325,6 +467,7 @@ async function initMap(){
      .bindPopup(popup(v.name,esc((v.chain?v.chain+" · ":"")+hoursText(v)),`<a href="tel:${v.tel[0][0]}">Call</a><a href="${maps(v.q)}" target="_blank" rel="noopener">Directions</a>`)).addTo(MAP);
     vet.push(v.ll);
   });
+  surfDays().forEach(d=>{const b=SURF[d.surf.b];L.marker(b.ll,{icon:divPin("dot surf","",18)}).bindPopup(popup(b.name,`Surf · ${fd(d.date).w} ${fd(d.date).d}`,`<a href="#surf${d.n}">Session</a> · <a href="${maps(b.q)}" target="_blank" rel="noopener">Directions</a>`)).addTo(MAP)});
   Object.values(OUTLETS).forEach(o=>o.ll&&L.marker(o.ll,{icon:divPin("dot","",18)}).bindPopup(popup(o.name,"Outlet, optional",`<a href="${maps(o.q)}" target="_blank" rel="noopener">Directions</a>`)).addTo(MAP));
   GROUPS={all:all.concat([[39.36195,-9.15715]]),gal,pen,vet};
 }
@@ -476,11 +619,13 @@ function route(keep){
   if(["today","plan","lists","info","map"].includes(h))v=h;
   const m=h.match(/^day(\d+)$/);if(m){day=DAYS.find(d=>d.n===+m[1]);if(day)v="day"}
   const mm=h.match(/^map\/(.+)$/);if(mm){v="map";mapArg=mm[1]}
+  const ms=h.match(/^surf(\d+)$/);let sday=null;if(ms){sday=DAYS.find(d=>d.n===+ms[1]&&d.surf);if(sday)v="surf"}
   if(keep===true){renderToday();renderPlan()}
   if(v==="day")$("#v-day").innerHTML=dayDetail(day);
+  if(v==="surf")renderSurf(sday);
   renderTop(v);
   document.querySelectorAll("[data-view]").forEach(s=>s.hidden=s.dataset.view!==v);
-  const tab=v==="day"?"plan":v;
+  const tab=v==="day"?"plan":v==="surf"?(sday.date===T?"today":"plan"):v;
   document.querySelectorAll("[data-tab]").forEach(a=>{if(a.dataset.tab===tab)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
   if(keep!==true)window.scrollTo(0,0);
   if(v==="map")showMap(mapArg).then(()=>{if(mapArg==="vet")fitTo("vet")});
@@ -491,6 +636,7 @@ function route(keep){
 document.addEventListener("change",e=>{if(e.target.matches("[data-vfrom]")){VFROM=e.target.value;refreshVets();document.querySelector("[data-vfrom]").focus();return}const k=e.target.dataset&&e.target.dataset.key;if(!k)return;if(e.target.checked)checks[k]=1;else delete checks[k];save();refreshList(k.split(":")[0]);renderToday()});
 document.addEventListener("click",e=>{
   const f=e.target.closest("[data-fit]");if(f){fitTo(f.dataset.fit);return}
+  const hb=e.target.closest("[data-here]");if(hb){routeFromHere(hb.dataset.here,hb);return}
   const r=e.target.closest("[data-reset]");
   if(r){if(!r.hasAttribute("data-armed")){r.setAttribute("data-armed","");r.textContent="Tap again to clear";setTimeout(()=>{r.removeAttribute("data-armed");r.textContent="Clear list"},3000);return}
     const id=r.dataset.reset;Object.keys(checks).forEach(k=>{if(k.startsWith(id+":"))delete checks[k]});save();
@@ -498,11 +644,13 @@ document.addEventListener("click",e=>{
   const o=e.target.closest("[data-open]");if(o)setTimeout(()=>{const d=document.getElementById("list-"+o.dataset.open);if(d){d.open=true;d.scrollIntoView({block:"start"})}},40);
 });
 window.addEventListener("hashchange",()=>route());
-window.addEventListener("online",loadWeather);
+window.addEventListener("online",()=>{loadWeather();loadSurf()});
+setInterval(()=>{loadWeather();loadSurf()},30*60000);
 setInterval(()=>{refreshVets();refreshTiles()},60000);document.addEventListener("visibilitychange",()=>{if(!document.hidden){refreshVets();refreshTiles()}});
 
 /* ================= Boot ================= */
 renderToday();renderPlan();renderLists();renderInfo();
 route();
-loadWeather();
+loadWeather();loadSurf();
+if(navigator.permissions&&navigator.permissions.query)navigator.permissions.query({name:"geolocation"}).then(st=>{if(st.state!=="granted")return;const d=DAYS.find(z=>z.date===T&&z.surf);if(d)routeFromHere(d.surf.b)}).catch(()=>{});
 })();
