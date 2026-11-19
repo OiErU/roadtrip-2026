@@ -3,8 +3,12 @@
 "use strict";
 const $=(s,r=document)=>r.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const maps=q=>"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q);
 const ext=(href,label,cls="")=>`<a class="btn ${cls}" href="${href}" target="_blank" rel="noopener">${label}</a>`;
+/* Driving directions. Coordinates when we have them (exact), the place name otherwise. Google or Apple Maps, chosen in Info. */
+const NAVKEY="fw2026-nav";let NAV="google";try{NAV=localStorage.getItem(NAVKEY)||"google"}catch(e){}
+const driveURL=(ll,q)=>{const dest=ll?ll[0]+","+ll[1]:q;return NAV==="apple"?"https://maps.apple.com/?daddr="+encodeURIComponent(dest)+"&dirflg=d":"https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(dest)+"&travelmode=driving"};
+const drive=(ll,q,label="Drive there")=>`<a class="btn go" href="${driveURL(ll,q)}" target="_blank" rel="noopener">${IC.car}${esc(label)}</a>`;
+const driveLink=(ll,q)=>`<a href="${driveURL(ll,q)}" target="_blank" rel="noopener">Drive there</a>`;
 const img=(k,thumb)=>`img/${thumb?"t/":""}${k}.jpg`;
 const IC={
  car:'<svg viewBox="0 0 24 24"><path d="M3 13.5l2-6h14l2 6V18h-2.5M6 18H3v-4.5h18"/><circle cx="7.5" cy="18" r="2"/><circle cx="16.5" cy="18" r="2"/></svg>',
@@ -117,7 +121,7 @@ function hikeHTML(h,d,i){
   if(h.wl)links.push(ext(h.wl,esc(h.wlLabel||"Wikiloc track")));
   if(h.src)links.push(ext(h.src,esc(h.srcLabel||"Official route sheet")));
   (h.warn||[]).forEach(([t,u])=>links.push(ext(u,esc(t),"warn")));
-  links.push(ext(maps(h.mq),"Trailhead in Maps"));
+  links.unshift(drive(h.ll,h.mq));
   if(h.ll)links.push(`<a class="btn" href="#map/h-${d.n}-${i}">${IC.pin}On the map</a>`);
   return `<article class="hike"><div class="ph">${h.photo?`<img src="${img(h.photo)}" alt="" loading="lazy">`:""}${h.opt?`<span class="flag"><i class="wm-turn" aria-hidden="true"></i>${esc(h.opt)}</span>`:""}</div><div class="bd">
    <h4>${esc(h.name)}</h4>
@@ -126,7 +130,7 @@ function hikeHTML(h,d,i){
 }
 function extraHTML(x){
   return `<article class="hike"><div class="ph"><img src="${img(x.photo)}" alt="" loading="lazy"></div><div class="bd"><h4>${esc(x.name)}</h4><p>${esc(x.text)}</p>
-   <div class="btns">${ext(maps(x.mq),"Directions")}</div>${credit(x.photo)}</div></article>`;
+   <div class="btns">${drive(x.ll,x.mq)}</div>${credit(x.photo)}</div></article>`;
 }
 const noteIcon=k=>k==="warn"?'<i class="wm-x" aria-hidden="true"></i>':'<i class="wm" aria-hidden="true"></i>';
 function dayDetail(d,opts={}){
@@ -150,11 +154,11 @@ function dayDetail(d,opts={}){
   ${d.notes.map(([k,t,s])=>`<div class="note ${k}">${noteIcon(k)}<b>${esc(t)}</b><span>${esc(s)}</span></div>`).join("")}
   ${d.shops?`<div class="stack"><h3 class="h3">Outlet stop, optional</h3><div class="note shop">${noteIcon()}<b>Gear deals</b><span>${esc(d.shops.intro)}</span></div><div class="cards">${d.shops.list.map(k=>outletCard(k)).join("")}</div></div>`:""}
   ${d.soak?`<div class="stack"><h3 class="h3">Hot springs, optional</h3><div class="note">${noteIcon()}<b>Warm water</b><span>${esc(d.soak.intro)}</span></div><div class="cards">${d.soak.list.map(soakCard).join("")}</div></div>`:""}
-  ${d.sleep?`<div class="sleep">${IC.tent}<span><small>${esc(d.night)}</small><a href="${maps(d.sleep.q)}" target="_blank" rel="noopener">${esc(d.sleep.name)}</a></span></div>`:`<div class="sleep">${IC.home}<span><small>Night 10</small>${esc(d.night)}</span></div>`}`;
+  ${d.sleep?`<div class="sleep">${IC.tent}<span><small>${esc(d.night)}</small>${esc(d.sleep.name)}</span>${drive(d.sleep.ll,d.sleep.q)}</div>`:`<div class="sleep">${IC.home}<span><small>Night 10</small>${esc(d.night)}</span></div>`}`;
 }
 function soakCard(k){return outletCard(k,SOAKS)}
 function outletCard(k,src){const o=(src||OUTLETS)[k];return `<div class="card"><span class="k">${esc(o.tag)}</span><h3 class="h3">${esc(o.name)}</h3><p>${esc(o.addr)}</p><p style="color:var(--muted);font-size:15px">${esc(o.info)}</p>
-  <div class="btns">${o.tel?tel(o.tel[1],o.tel[0]):""}${ext(maps(o.q),"Directions")}${o.page?ext(o.page,"Store page"):""}</div></div>`}
+  <div class="btns">${o.tel?tel(o.tel[1],o.tel[0]):""}${drive(o.ll,o.q)}${o.page?ext(o.page,"Store page"):""}</div></div>`}
 
 /* ================= Plan ================= */
 function stopHTML(d){
@@ -337,7 +341,7 @@ const IC_TIDE='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 15c3-5 6-
 function surfTile(d){
   const I=surfInfo(d), x=I.x, al=surfAlerts(I), fr=x&&x.c!=null?faceRange(x.c):I.plan.faces.map(v=>v.toFixed(1)), mid=(+fr[0]+ +fr[1])/2;
   const cap=s=>s[0].toUpperCase()+s.slice(1);
-  return `<a class="tile wide surf" href="#surf${d.n}">
+  return `<div class="tile wide surf">
    <span class="row"><span class="lab">Surf · ${clock(I.start)}–${clock(I.start+SLOT)}</span><span class="sm">1 h in the water + changing</span></span>
    <b class="mid">${esc(I.b.name)}</b>
    <span class="sgrid"><span class="span2"><b class="big num">${fr[0]}–${fr[1]} m</b><small>faces · ${faceWords(mid)}</small></span><span><b class="big num">${x?Math.round(x.Tp)+" s":"–"}</b><small>period</small></span><span><b class="big num">${I.live&&I.sst!=null?Math.round(I.sst)+"°":"–"}</b><small>water</small></span></span>
@@ -345,7 +349,8 @@ function surfTile(d){
    <span class="line">${IC_TIDE}<span>${tideText(I)}</span></span>
    ${I.live?"":`<span class="alert">Planned figures. The live forecast appears about two weeks ahead.</span>`}
    ${al.list.length?`<span class="alert${al.major?" major":""}">${al.major?"Changed since planning: ":""}${esc(al.list[0])}${al.list.length>1?` (+${al.list.length-1} more)`:""}</span>`:""}
-   <span class="row"><span class="sm num">${fromText(I)}${I.live?" · updated "+hhmm(SURFWX.ts):""}</span><span class="go">Details ${IC.r}</span></span></a>`;
+   <span class="sm num">${fromText(I)}${I.live?" · updated "+hhmm(SURFWX.ts):""}</span>
+   <span class="acts"><a class="sbtn go" href="${driveURL(I.b.ll,I.b.q)}" target="_blank" rel="noopener">${IC.car}Drive there</a><a class="sbtn" href="#surf${d.n}">Details ${IC.r}</a></span></div>`;
 }
 function tideChart(I,now){
   const a=8*60,b=20*60,W=350,H=140,x=m=>10+(m-a)/(b-a)*330,lo=Math.min(...I.sl.slice(8,21)),hi=Math.max(...I.sl.slice(8,21)),y=v=>14+(hi-v)/((hi-lo)||1)*100;
@@ -376,19 +381,20 @@ function renderSurf(d){
    <div class="sfacts"><span><b class="num">${fr[0]}–${fr[1]} m</b>faces · ${faceWords((+fr[0]+ +fr[1])/2)}</span><span><b class="num">${x?Math.round(x.Tp)+" s":"–"}</b>period</span><span><b class="num">${I.live&&I.sst!=null?Math.round(I.sst)+"°":"–"}</b>water</span><span><b class="num">${after>0?dur(after):"–"}</b>light after</span></div>
    <div class="note"><i class="wm" aria-hidden="true"></i><b>From your Gemini plan</b><span>${esc(b.why)} Parking: ${esc(b.park[0].toLowerCase()+b.park.slice(1))}</span></div>
    <p class="wx-note">Faces are an estimate from the swell height and period, and how squarely the swell hits this beach. Wind is labelled from the direction the beach faces (${compass(b.face)}).</p>
-   <div class="btns">${ext(maps(b.q),"Directions","solid")}<button class="btn" type="button" data-here="${d.surf.b}">Drive time from here</button></div>`;
+   <div class="btns">${drive(b.ll,b.q)}<button class="btn" type="button" data-here="${d.surf.b}">Drive time from here</button></div>`;
 }
 function dayTiles(d){
   const s=sunOf(d), live=d.date===T, now=live?nowIn(s.tz==="Europe/Lisbon"?"pt":"es").min:null, f=fd(d.date);
   const main=d.hikes.filter(h=>!h.opt), km=kmOf(d), t0=d.timeline[0]||["",""], leave=/^Leave/i.test(t0[1]);
   const walkLine=main.length?`${km.toFixed(1)} km · ${main.length>1?main.length+" walks":esc(main[0].time)}${main.length===1&&main[0].gain?` · ${main[0].gain} m up`:""}`:esc(d.drive.split(" · ").slice(0,2).map((x,i)=>i?x.split(",")[0]:x).join(" · ").replace(/\.$/,""));
-  const hero=`<a class="tile wide photo" href="${main.length?maps(main[0].mq):"#day"+d.n}"${main.length?' target="_blank" rel="noopener"':""} aria-label="${main.length?"Directions to "+esc(main[0].name):"Day "+d.n+" details"}">
-    <img src="${img(coverOf(d))}" alt=""><span class="row end"><span class="col"><span class="lab">${main.length?"The walk · "+esc(main[0].name.split(" · ")[0]):"Drive day"}</span><span class="sm">${walkLine}</span></span>
+  const dest=main.length?[main[0].ll,main[0].mq,main[0].name]:d.sleep?[d.sleep.ll,d.sleep.q,d.sleep.name]:null;
+  const hero=`<a class="tile wide photo" href="${dest?driveURL(dest[0],dest[1]):"#day"+d.n}"${dest?' target="_blank" rel="noopener"':""} aria-label="${dest?"Drive to "+esc(dest[2]):"Day "+d.n+" details"}">
+    <img src="${img(coverOf(d))}" alt=""><span class="row end"><span class="col"><span class="lab">${main.length?"The walk · "+esc(main[0].name.split(" · ")[0]):"Drive day"}</span><span class="sm">${walkLine}</span>${dest?`<span class="pill">${IC.car}Drive there</span>`:""}</span>
     ${t0[0]?`<span class="col r"><span class="lab">${leave?"Leave":"Starts"}</span><b class="big num">${esc(t0[0])}</b></span>`:""}</span></a>`;
   const second=d.clock?`<div class="tile dark"><span class="lab">Clock</span><b class="big num">${esc(d.clock[0])}</b><span class="sm">${esc(d.clock[1])}</span></div>`
-    :d.sleep?`<a class="tile" href="${maps(d.sleep.q)}" target="_blank" rel="noopener"><span class="lab">Tonight · ${esc(d.night.toLowerCase())}</span><b class="mid">${esc(d.sleep.name)}</b><span class="sm">Directions</span></a>`
+    :d.sleep?`<a class="tile" href="${driveURL(d.sleep.ll,d.sleep.q)}" target="_blank" rel="noopener"><span class="lab">Tonight · ${esc(d.night.toLowerCase())}</span><b class="mid">${esc(d.sleep.name)}</b><span class="pill">${IC.car}Drive there</span></a>`
     :`<div class="tile"><span class="lab">Tonight</span><b class="mid">Home</b><span class="sm">${esc(d.night)}</span></div>`;
-  const place=(src,list,intro)=>list.slice(0,2).map(k=>{const o=src[k];return `<a class="tile wide place" href="${maps(o.q)}" target="_blank" rel="noopener"><span class="lab">${esc(o.tag)}</span><b class="mid">${esc(o.name)}</b><span class="sm">${esc(firstSentence(intro))}</span></a>`}).join("");
+  const place=(src,list,intro)=>list.slice(0,2).map(k=>{const o=src[k];return `<a class="tile wide place" href="${driveURL(o.ll,o.q)}" target="_blank" rel="noopener"><span class="lab">${esc(o.tag)}</span><b class="mid">${esc(o.name)}</b><span class="sm">${esc(firstSentence(intro))}</span><span class="pill">${IC.car}Drive there</span></a>`}).join("");
   const warn=d.notes.find(n=>n[0]==="warn");
   return `<div class="tiles" id="tiles">
    <div class="t-head wide"><span class="lab">${f.W} ${f.d} Nov · Day ${d.n} of 10${d.clock?"":" · "+(s.tz==="Europe/Madrid"?"Spain":"Portugal")}</span><h1>${esc(d.title)}</h1></div>
@@ -445,14 +451,14 @@ async function initMap(){
   const all=[], gal=[], pen=[], vet=[];
   Object.values(ROUTES).forEach(line=>{L.polyline(line,{color:"#1D2320",weight:7,opacity:.85,interactive:false}).addTo(MAP);L.polyline(line,{color:"#EDB81C",weight:3,opacity:1,interactive:false}).addTo(MAP)});
   [[NEVEDAS,"20–25 Nov · 5 nights",gal],[LAMAS,"25–29 Nov · 4 nights",pen]].forEach(([c,s,grp])=>{
-    const m=L.marker(c.ll,{icon:divPin("camp",IC.moon,34),zIndexOffset:300}).bindPopup(popup(c.name,s,`<a href="${maps(c.q)}" target="_blank" rel="noopener">Directions</a>`)).addTo(MAP);
+    const m=L.marker(c.ll,{icon:divPin("camp",IC.moon,34),zIndexOffset:300}).bindPopup(()=>popup(c.name,s,driveLink(c.ll,c.q))).addTo(MAP);
     all.push(c.ll);grp.push(c.ll);
   });
   DAYS.forEach(d=>{
     const cls=d.base==="gal"?"gal":d.base==="pen"?"pen":"road", f=fd(d.date);
     const add=(x,key,isOpt)=>{if(!x.ll)return;
       const m=L.marker(x.ll,{icon:divPin(cls+(isOpt?" opt":""),d.n),zIndexOffset:isOpt?0:500})
-       .bindPopup(popup(x.name,`Day ${d.n}, ${f.W} ${f.d}${isOpt?" · option":""}${x.km?` · ${x.km} km`:""}`,`<a href="#day${d.n}">Day page</a><a href="${maps(x.mq)}" target="_blank" rel="noopener">Trailhead</a>`)).addTo(MAP);
+       .bindPopup(()=>popup(x.name,`Day ${d.n}, ${f.W} ${f.d}${isOpt?" · option":""}${x.km?` · ${x.km} km`:""}`,`<a href="#day${d.n}">Day page</a>${driveLink(x.ll,x.mq)}`)).addTo(MAP);
       MARK[key]=m;all.push(x.ll);if(d.n<=5)gal.push(x.ll);else if(d.base==="pen")pen.push(x.ll);
     };
     d.hikes.forEach((h,i)=>add(h,`h-${d.n}-${i}`,!!h.opt));
@@ -460,15 +466,15 @@ async function initMap(){
     (d.soak?d.soak.list:[]).forEach((k,i)=>{const o=SOAKS[k];add({name:o.name,ll:o.ll,mq:o.q},`s-${d.n}-${i}`,true)});
   });
   PLACES.forEach(([k,name,ll,q,note])=>{
-    L.marker(ll,{icon:divPin("dot "+k,"",18)}).bindPopup(popup(name,esc(note),`<a href="${maps(q)}" target="_blank" rel="noopener">Directions</a>`)).addTo(MAP);
+    L.marker(ll,{icon:divPin("dot "+k,"",18)}).bindPopup(()=>popup(name,esc(note),driveLink(ll,q))).addTo(MAP);
   });
   Object.values(VETS).forEach(v=>{
     L.marker(v.ll,{icon:divPin("vet"+(is24(v)?"":v.kind==="oncall"?" oncall":" day"),"+",28)})
-     .bindPopup(popup(v.name,esc((v.chain?v.chain+" · ":"")+hoursText(v)),`<a href="tel:${v.tel[0][0]}">Call</a><a href="${maps(v.q)}" target="_blank" rel="noopener">Directions</a>`)).addTo(MAP);
+     .bindPopup(()=>popup(v.name,esc((v.chain?v.chain+" · ":"")+hoursText(v)),`<a href="tel:${v.tel[0][0]}">Call</a>${driveLink(v.ll,v.q)}`)).addTo(MAP);
     vet.push(v.ll);
   });
-  surfDays().forEach(d=>{const b=SURF[d.surf.b];L.marker(b.ll,{icon:divPin("dot surf","",18)}).bindPopup(popup(b.name,`Surf · ${fd(d.date).w} ${fd(d.date).d}`,`<a href="#surf${d.n}">Session</a> · <a href="${maps(b.q)}" target="_blank" rel="noopener">Directions</a>`)).addTo(MAP)});
-  Object.values(OUTLETS).forEach(o=>o.ll&&L.marker(o.ll,{icon:divPin("dot","",18)}).bindPopup(popup(o.name,"Outlet, optional",`<a href="${maps(o.q)}" target="_blank" rel="noopener">Directions</a>`)).addTo(MAP));
+  surfDays().forEach(d=>{const b=SURF[d.surf.b];L.marker(b.ll,{icon:divPin("dot surf","",18)}).bindPopup(()=>popup(b.name,`Surf · ${fd(d.date).w} ${fd(d.date).d}`,`<a href="#surf${d.n}">Session</a>${driveLink(b.ll,b.q)}`)).addTo(MAP)});
+  Object.values(OUTLETS).forEach(o=>o.ll&&L.marker(o.ll,{icon:divPin("dot","",18)}).bindPopup(()=>popup(o.name,"Outlet, optional",driveLink(o.ll,o.q))).addTo(MAP));
   GROUPS={all:all.concat([[39.36195,-9.15715]]),gal,pen,vet};
 }
 function fitTo(k){
@@ -553,7 +559,7 @@ function vetsHTML(){
    <h3 class="h3">${esc(best.v.name)}</h3><div>${vetTags(best.v)}</div>
    <p>${esc(best.v.town)} · about <b>${dur(best.m)}</b> from ${esc(fromLabel)} · <span class="st-${best.s.cls}">${best.s.txt}</span></p>
    ${best.v.kind==="oncall"?`<p>${esc(best.v.note)}</p>`:""}
-   <div class="btns">${vetTels(best.v,true)}${ext(maps(best.v.q),"Directions")}</div>
+   <div class="btns">${vetTels(best.v,true)}${drive(best.v.ll,best.v.q)}</div>
    ${!is24(best.v)&&best24?`<p class="vnext">Nearest 24 h hospital: <b>${esc(best24.v.name)}</b>, ${dur(best24.m)}</p>`:""}
    ${others.length?`<p class="vnext">Also open: ${others.map(x=>`${esc(x.v.name)}, ${dur(x.m)}`).join(" · ")}</p>`:""}
   </div>
@@ -561,7 +567,7 @@ function vetsHTML(){
   <div class="vlist">${L.map(({v,m,s})=>`<details class="vrow"><summary><span class="vdot ${is24(v)?"r":v.kind==="oncall"?"o":""}" aria-hidden="true"></span>
     <span class="vn"><b>${esc(v.name)}</b>${v.chain?`<span class="vtag c">${v.chain}</span>`:""}<small>${esc(v.town)} · <span class="st-${s.cls}">${s.txt}</span></small></span><span class="vt">${dur(m)}</span></summary>
     <div class="vbody"><p>${hoursText(v)}</p><p class="mut">${esc(v.addr)}</p>${v.note?`<p>${esc(v.note)}</p>`:""}
-    <div class="btns">${vetTels(v,false)}${ext(maps(v.q),"Directions")}${v.web?ext(v.web,"Website"):""}</div></div></details>`).join("")}</div>
+    <div class="btns">${vetTels(v,false)}${drive(v.ll,v.q)}${v.web?ext(v.web,"Website"):""}</div></div></details>`).join("")}</div>
   <p class="foot"><span class="vdot r"></span> 24 h emergencies <span class="vdot o"></span> on-call vet <span class="vdot"></span> clinic hours only. Hours are local time (Spain is an hour ahead). Drive times are estimates, so check Maps.</p>`;
 }
 function refreshVets(){const el=document.getElementById("vets");if(el)el.innerHTML=vetsHTML()}
@@ -569,13 +575,15 @@ function refreshVets(){const el=document.getElementById("vets");if(el)el.innerHT
 /* ================= Info ================= */
 function renderInfo(){
   $("#v-info").innerHTML=`<div class="sec-head"><h2 class="title">Field notes</h2><p class="sub">Campsites, vets, insurance, power and the practical details.</p></div>
+  <div class="panel navpick"><div><h3 class="h3">Drive there opens in</h3><p class="sub">Every Drive there button in the app uses this. Apple Maps is always on the iPhone. Google Maps opens the app if you have it, or the website if not.</p></div>
+   <div class="seg" role="group" aria-label="Maps app for directions"><button type="button" data-nav="google" aria-pressed="${NAV==="google"}">Google Maps</button><button type="button" data-nav="apple" aria-pressed="${NAV==="apple"}">Apple Maps</button></div></div>
   <div class="stack"><h2 class="h2">Campsites</h2><div class="cards">
    <div class="card"><span class="k">20–25 Nov, 5 nights</span><h3 class="h3">Camping As Nevedas</h3>
     <dl class="kv"><dt>Address</dt><dd>Carretera Rapadoiro–Noicela, 15105 Carballo (A Coruña)</dd><dt>GPS</dt><dd class="num">43.29319, -8.62229</dd><dt>Open</dt><dd>All year. Dogs allowed (microchipped).</dd><dt>Nearby</dt><dd>Razo, Baldaio and Caión beaches. Carballo 15 min, A Coruña about 25 min.</dd><dt>Power</dt><dd>Optional. Ask on arrival.</dd></dl>
-    <div class="btns">${tel("+34657064733","+34 657 06 47 33")}${ext(maps(NEVEDAS.q),"Directions")}${ext("https://www.pitchup.com/es/campsites/spain/galicia/la-coruna/carballo/camping-as-nevedas/","Pitchup")}</div></div>
+    <div class="btns">${tel("+34657064733","+34 657 06 47 33")}${drive(NEVEDAS.ll,NEVEDAS.q)}${ext("https://www.pitchup.com/es/campsites/spain/galicia/la-coruna/carballo/camping-as-nevedas/","Pitchup")}</div></div>
    <div class="card"><span class="k">25–29 Nov, 4 nights</span><h3 class="h3">Lamas de Mouro</h3>
     <dl class="kv"><dt>Address</dt><dd>Veigas de Lama, 4960-170 Lamas de Mouro, Melgaço</dd><dt>GPS</dt><dd class="num">42.03582, -8.19608</dd><dt>Altitude</dt><dd>About 900 m, so frost is likely</dd><dt>Open</dt><dd>All year. Dogs allowed, dog park on site.</dd><dt>Park gate</dt><dd>Porta de Lamas de Mouro (trails and info)</dd></dl>
-    <div class="btns">${tel("+351251466041","Campsite 251 466 041")}${tel("+351251465010","Park gate 251 465 010")}${ext(maps(LAMAS.q),"Directions")}${ext("https://www.pitchup.com/en-au/campsites/portugal/viana_do_castelo/melgaco/lamas_de_mouro/parque-de-campismo-lamas-de-mouro","Pitchup")}</div></div>
+    <div class="btns">${tel("+351251466041","Campsite 251 466 041")}${tel("+351251465010","Park gate 251 465 010")}${drive(LAMAS.ll,LAMAS.q)}${ext("https://www.pitchup.com/en-au/campsites/portugal/viana_do_castelo/melgaco/lamas_de_mouro/parque-de-campismo-lamas-de-mouro","Pitchup")}</div></div>
   </div></div>
   <div class="stack"><div class="sec-head"><h2 class="h2">Vets</h2><p class="sub">Spain or Portugal, whichever is faster. Phone first so they're ready for you. Emergency in either country: 112.</p></div>
   <div class="btns">${tel("112","Call 112")}<a class="btn" href="#map/vet" data-fit-vet>${IC.pin}Vets on the map</a></div>
@@ -602,7 +610,7 @@ function renderInfo(){
    <tr><td>Lamas de Mouro (PT)</td><td>29 Nov</td><td>07:39</td><td>17:02</td><td>17:34</td></tr></tbody></table></div></div></div>
   <div class="cards">
    <div class="card"><span class="k">Food</span><h3 class="h3">Supermarkets</h3><dl class="kv"><dt>Galicia</dt><dd>Lidl Carballo, Avda. Bértoa s/n. Gadis Hiper, Avda. Razo s/n.</dd><dt>Peneda</dt><dd>Intermarché Melgaço, Lugar do Galvão, 25 min from camp</dd><dt>Note</dt><dd>Spanish shops often close or open briefly on Sundays. Do the big shop on Saturday.</dd></dl>
-    <div class="btns">${ext(maps("Lidl Carballo"),"Lidl Carballo")}${ext(maps("Intermarché Melgaço"),"Intermarché Melgaço")}</div></div>
+    <div class="btns">${drive([43.22208,-8.68502],"Lidl Carballo","Lidl Carballo")}${drive([42.10934,-8.26153],"Intermarché Melgaço","Intermarché Melgaço")}</div></div>
    <div class="card"><span class="k">Check each evening</span><h3 class="h3">Forecasts and trails</h3><div class="btns">${ext("https://www.meteogalicia.gal","MeteoGalicia")}${ext("https://www.ipma.pt","IPMA")}${ext("https://patrimonionatural.xunta.gal/es/node/46","Eume route status")}${ext("https://discovermelgaco.pt/trilhos/","Melgaço trails")}</div><p style="font-size:15px;color:var(--muted)">On high fire-risk days, trails in the national park can be closed. That's unlikely in November, but it's in the rules.</p></div>
    <div class="card"><span class="k">Four dogs</span><h3 class="h3">Trail rules of thumb</h3><ul class="tight"><li>Leads on in the national park and near livestock. Cattle and working dogs roam freely around Castro Laboreiro.</li><li>Avoid swollen rivers, cliff edges and wet granite slabs.</li><li>Galician beaches: check the signs. Many don't allow dogs.</li><li>Check for ticks every evening. Towel off paws before the tent.</li></ul></div>
   </div>
@@ -637,6 +645,7 @@ document.addEventListener("change",e=>{if(e.target.matches("[data-vfrom]")){VFRO
 document.addEventListener("click",e=>{
   const f=e.target.closest("[data-fit]");if(f){fitTo(f.dataset.fit);return}
   const hb=e.target.closest("[data-here]");if(hb){routeFromHere(hb.dataset.here,hb);return}
+  const nv=e.target.closest("[data-nav]");if(nv){NAV=nv.dataset.nav;try{localStorage.setItem(NAVKEY,NAV)}catch(err){}renderInfo();route(true);const b=document.querySelector(`[data-nav="${NAV}"]`);if(b)b.focus();return}
   const r=e.target.closest("[data-reset]");
   if(r){if(!r.hasAttribute("data-armed")){r.setAttribute("data-armed","");r.textContent="Tap again to clear";setTimeout(()=>{r.removeAttribute("data-armed");r.textContent="Clear list"},3000);return}
     const id=r.dataset.reset;Object.keys(checks).forEach(k=>{if(k.startsWith(id+":"))delete checks[k]});save();
