@@ -41,9 +41,9 @@ const mainWalks=d=>d.hikes.filter(h=>!h.opt).map(h=>h.name.split(" · ")[0]).joi
 
 /* ================= Weather (Open-Meteo, no key) ================= */
 const WXKEY="fw2026-wx", WX_MAX_AGE=3*36e5;
-const SPOT={nevedas:NEVEDAS.ll,lamas:LAMAS.ll};
-const llOf=d=>Array.isArray(d.wx)?d.wx:SPOT[d.wx]||NEVEDAS.ll;
-const climateOf=d=>CLIMATE[d.base==="pen"||d.sleep===LAMAS?"lamas":"nevedas"];
+const SPOT={costa:COSTA.ll,lamas:LAMAS.ll};
+const llOf=d=>Array.isArray(d.wx)?d.wx:SPOT[d.wx]||COSTA.ll;
+const climateOf=d=>CLIMATE[d.base==="pen"||d.sleep===LAMAS?"lamas":"costa"];
 const llKey=ll=>ll[0].toFixed(3)+","+ll[1].toFixed(3);
 let WX=null;try{WX=JSON.parse(localStorage.getItem(WXKEY)||"null")}catch(e){}
 function wxFor(d){
@@ -83,7 +83,7 @@ function wxIcon(c){
   };
   return `<svg class="wi" viewBox="0 0 32 32" aria-hidden="true">${g[k]}</svg>`;
 }
-const placeName=d=>{const ll=llOf(d);return d.wx==="nevedas"?"As Nevedas":d.wx==="lamas"?"Lamas de Mouro":(d.hikes.find(h=>h.ll&&h.ll[0]===ll[0])||{name:"the trailhead"}).name.split(" · ")[0]};
+const placeName=d=>{const ll=llOf(d);return d.wx==="costa"?"Costa da Morte camp":d.wx==="lamas"?"Lamas de Mouro":(d.hikes.find(h=>h.ll&&h.ll[0]===ll[0])||{name:"the trailhead"}).name.split(" · ")[0]};
 function wxCard(d){
   const w=wxFor(d);
   if(w.fc){const [,label]=wxKind(w.code);
@@ -189,7 +189,7 @@ function renderPlan(){
   const gal=DAYS.slice(0,5), pen=DAYS.slice(5);
   $("#v-plan").innerHTML=`<div class="sec-head"><h2 class="title">The plan</h2>
    <p class="sub">About ${Math.round(TOTAL)} km of walking over ten days, never two long days in a row, and the longest day can be cut short. Tap a day for its page.</p></div>
-   <div class="leg"><div class="leg-head"><h2 class="h2">Costa da Morte</h2><span class="sub">5 nights at Camping As Nevedas, Carballo</span></div><ol class="trail">${gal.map(stopHTML).join("")}</ol></div>
+   <div class="leg"><div class="leg-head"><h2 class="h2">Costa da Morte</h2><span class="sub">5 nights at Camping Costa da Morte, Zas</span></div><ol class="trail">${gal.map(stopHTML).join("")}</ol></div>
    <div class="leg"><div class="leg-head"><h2 class="h2">Peneda-Gerês</h2><span class="sub">4 nights at Lamas de Mouro, then home through Buçaco</span></div><ol class="trail">${pen.map(stopHTML).join("")}</ol></div>
    <div class="panel"><h3 class="h3">Walking per day</h3>${chart()}
     <div class="legend"><span><i style="background:var(--atl)"></i>Galicia</span><span><i style="background:var(--moss)"></i>Peneda-Gerês</span><span><i style="background:var(--earth)"></i>Road days</span></div></div>
@@ -204,7 +204,7 @@ function progBlock(l,label){
    <div class="meter"><i style="width:${100*d/l.items.length}%"></i></div><div class="btns"><a class="btn solid" href="#lists" data-open="${l.id}">Open the list</a></div></div>`;
 }
 /* Sun times (NOAA approximation): first light, sunrise, sunset, last light, as minutes in the day's local time */
-const tzOf=d=>d.base==="gal"||d.wx==="nevedas"?"Europe/Madrid":"Europe/Lisbon";
+const tzOf=d=>d.base==="gal"||d.wx==="costa"?"Europe/Madrid":"Europe/Lisbon";
 function locMin(date,tz){
   try{const p={};new Intl.DateTimeFormat("en-GB",{timeZone:tz,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(date).forEach(x=>p[x.type]=x.value);return +p.hour*60+ +p.minute}
   catch(e){return date.getUTCHours()*60+date.getUTCMinutes()+(tz==="Europe/Madrid"?60:0)}
@@ -453,7 +453,7 @@ async function initMap(){
     attribution:'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, SRTM · Style &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'}).addTo(MAP);
   const all=[], gal=[], pen=[], vet=[];
   Object.values(ROUTES).forEach(line=>{L.polyline(line,{color:"#1D2320",weight:7,opacity:.85,interactive:false}).addTo(MAP);L.polyline(line,{color:"#EDB81C",weight:3,opacity:1,interactive:false}).addTo(MAP)});
-  [[NEVEDAS,"20–25 Nov · 5 nights",gal],[LAMAS,"25–29 Nov · 4 nights",pen]].forEach(([c,s,grp])=>{
+  [[COSTA,"20–25 Nov · 5 nights",gal],[LAMAS,"25–29 Nov · 4 nights",pen]].forEach(([c,s,grp])=>{
     const m=L.marker(c.ll,{icon:divPin("camp",IC.moon,34),zIndexOffset:300}).bindPopup(()=>popup(c.name,s,driveLink(c.ll,c.q))).addTo(MAP);
     all.push(c.ll);grp.push(c.ll);
   });
@@ -545,10 +545,10 @@ function vetStatus(v,drive){
 let VFROM=null;
 function vetFromDefault(){ // where you probably are, from the trip day and the hour
   const d=DAYS.find(x=>x.date===T), h=nowIn("es").min/60, day=h>=9&&h<17;
-  if(!d)return T>END?"lamas":"nevedas";
+  if(!d)return T>END?"lamas":"costa";
   if(d.n===4&&day)return"eume"; if(d.n===5&&day)return"ezaro"; if(d.n===8&&day)return"albergaria";
-  if(d.n===6)return h<10?"nevedas":h<15?"barosa":"lamas";
-  return d.n<=5?"nevedas":"lamas";
+  if(d.n===6)return h<10?"costa":h<15?"barosa":"lamas";
+  return d.n<=5?"costa":"lamas";
 }
 const vetTags=v=>(is24(v)?`<span class="vtag h">24 h</span>`:v.kind==="oncall"?`<span class="vtag k">24 h on call</span>`:`<span class="vtag k">Clinic hours</span>`)+(v.chain?`<span class="vtag c">${v.chain}</span>`:"");
 const vetTels=(v,first)=>v.tel.map(([n,l],i)=>`<a class="btn tel${first&&i===0?" solid":""}" href="tel:${n}">${IC.phone}${esc(l)}</a>`).join("");
@@ -581,9 +581,9 @@ function renderInfo(){
   <div class="panel navpick"><div><h3 class="h3">Drive there opens in</h3><p class="sub">Every Drive there button in the app uses this. Apple Maps is always on the iPhone. Google Maps and Waze open their app if you have it installed, otherwise the website or the App Store. Waze also warns about police, hazards and traffic reported by other drivers.</p></div>
    <div class="seg" role="group" aria-label="Maps app for directions"><button type="button" data-nav="google" aria-pressed="${NAV==="google"}">Google</button><button type="button" data-nav="apple" aria-pressed="${NAV==="apple"}">Apple</button><button type="button" data-nav="waze" aria-pressed="${NAV==="waze"}">Waze</button></div></div>
   <div class="stack"><h2 class="h2">Campsites</h2><div class="cards">
-   <div class="card"><span class="k">20–25 Nov, 5 nights</span><h3 class="h3">Camping As Nevedas</h3>
-    <dl class="kv"><dt>Address</dt><dd>Carretera Rapadoiro–Noicela, 15105 Carballo (A Coruña)</dd><dt>GPS</dt><dd class="num">43.29319, -8.62229</dd><dt>Open</dt><dd>All year. Dogs allowed (microchipped).</dd><dt>Nearby</dt><dd>Razo, Baldaio and Caión beaches. Carballo 15 min, A Coruña about 25 min.</dd><dt>Power</dt><dd>Optional. Ask on arrival.</dd></dl>
-    <div class="btns">${tel("+34657064733","+34 657 06 47 33")}${drive(NEVEDAS.ll,NEVEDAS.q)}${ext("https://www.pitchup.com/es/campsites/spain/galicia/la-coruna/carballo/camping-as-nevedas/","Pitchup")}</div></div>
+   <div class="card"><span class="k">20–25 Nov, 5 nights</span><h3 class="h3">Camping Costa da Morte</h3>
+    <dl class="kv"><dt>Address</dt><dd>Lugar de Andregalla 1, Lamas, 15851 Zas (A Coruña)</dd><dt>GPS</dt><dd class="num">43.11553, -8.92816</dd><dt>Contact</dt><dd>Lucia (by phone, 20 Nov). Email tudiras@campingcostadamorte.com</dd><dt>Open</dt><dd>All year. Low-season reception 14:30–18:30. Check-in from 16:00, check-out by 11:00. Quiet hours 23:00–08:00.</dd><dt>Pitch</dt><dd>Tent area of over 1,000 m² by the Zas river. Low-season tent pack €25 a night: up to 4 people, 1 tent, 1 car and electricity included.</dd><dt>Dogs</dt><dd>€5 each a night. The rate card says max 2 pets, so check that all four are OK.</dd><dt>On site</dt><dd>Hot showers, laundry, small shop, vending area with microwave and coffee machine, washing-up sinks, dog wash, Wi-Fi. Bread delivered daily. The food truck only opens in summer.</dd><dt>Nearby</dt><dd>Baio 7 min (Gadis, Dia). Vimianzo 18 min. Carballo 30 min. Santiago about 45 min.</dd></dl>
+    <div class="btns">${tel("+34608425750","+34 608 425 750")}${drive(COSTA.ll,COSTA.q)}${ext("https://campingcostadamorte.com","Website")}</div></div>
    <div class="card"><span class="k">25–29 Nov, 4 nights</span><h3 class="h3">Lamas de Mouro</h3>
     <dl class="kv"><dt>Address</dt><dd>Veigas de Lama, 4960-170 Lamas de Mouro, Melgaço</dd><dt>GPS</dt><dd class="num">42.03582, -8.19608</dd><dt>Altitude</dt><dd>About 900 m, so frost is likely</dd><dt>Open</dt><dd>All year. Dogs allowed, dog park on site.</dd><dt>Park gate</dt><dd>Porta de Lamas de Mouro (trails and info)</dd></dl>
     <div class="btns">${tel("+351251466041","Campsite 251 466 041")}${tel("+351251465010","Park gate 251 465 010")}${drive(LAMAS.ll,LAMAS.q)}${ext("https://www.pitchup.com/en-au/campsites/portugal/viana_do_castelo/melgaco/lamas_de_mouro/parque-de-campismo-lamas-de-mouro","Pitchup")}</div></div>
@@ -601,19 +601,19 @@ function renderInfo(){
    <li>Your own policy wording is what counts. Confirm Vetcare is on your plan.</li></ul></div>
   <div class="stack"><h2 class="h2">Power and cold nights</h2><div class="cards">
    <div class="card"><h3 class="h3">Hook-up</h3><ul class="tight"><li>Ask both campsites for an electric pitch and <b>how many amps</b>.</li><li>Rough total for the whole pitch: <span class="num">6 A ≈ 1,380 W, 10 A ≈ 2,300 W, 16 A ≈ 3,680 W</span>.</li><li>Blue CEE 17 cable, 25 m, fully unrolled when in use. A coiled cable heats up.</li><li>Socket box with RCD. Keep connections off wet ground.</li></ul></div>
-   <div class="card"><h3 class="h3">At 900 m in November</h3><ul class="tight"><li>Lift the dogs' beds off the tent floor with insulated mats. Coats for the older two at night.</li><li>Leave a vent open to cut condensation. Wipe the inner each morning.</li><li>Keep drinking water inside so it doesn't freeze. Drive slowly on frosty mornings.</li><li>Typical nights here in late November are around ${CLIMATE.lamas.lo}°C, colder than the coast (${CLIMATE.nevedas.lo}°C).</li></ul></div>
+   <div class="card"><h3 class="h3">At 900 m in November</h3><ul class="tight"><li>Lift the dogs' beds off the tent floor with insulated mats. Coats for the older two at night.</li><li>Leave a vent open to cut condensation. Wipe the inner each morning.</li><li>Keep drinking water inside so it doesn't freeze. Drive slowly on frosty mornings.</li><li>Typical nights here in late November are around ${CLIMATE.lamas.lo}°C, colder than the Galicia camp (${CLIMATE.costa.lo}°C).</li></ul></div>
   </div></div>
-  <div class="stack"><div class="sec-head"><h2 class="h2">Outlet shopping</h2><p class="sub">El Corte Inglés outlets: Porriño on Friday's drive north, then two near the Galicia base. Spanish shops close on Sunday, so go to those on Saturday 21 or Tuesday 24.</p></div>
+  <div class="stack"><div class="sec-head"><h2 class="h2">Outlet shopping</h2><p class="sub">El Corte Inglés outlets: Porriño on Friday's drive north, then two near A Coruña, about 55 min from the Galicia camp. Spanish shops close on Sunday, so go to those on Saturday 21 or Tuesday 24.</p></div>
   <div class="cards">${outletCard("porrino")}${outletCard("altamira")}${outletCard("coruna")}</div></div>
   <div class="stack"><div class="sec-head"><h2 class="h2">Daylight</h2><p class="sub">Walks are planned to finish by about 16:30.</p></div>
   <div class="panel"><div class="tbl"><table><thead><tr><th>Place</th><th>Date</th><th>Sunrise</th><th>Sunset</th><th>Last light</th></tr></thead><tbody>
-   <tr><td>As Nevedas (ES)</td><td>20 Nov</td><td>08:34</td><td>18:05</td><td>18:37</td></tr>
-   <tr><td>As Nevedas (ES)</td><td>25 Nov</td><td>08:40</td><td>18:02</td><td>18:34</td></tr>
+   <tr><td>Costa da Morte (ES)</td><td>20 Nov</td><td>08:35</td><td>18:07</td><td>18:38</td></tr>
+   <tr><td>Costa da Morte (ES)</td><td>25 Nov</td><td>08:40</td><td>18:04</td><td>18:36</td></tr>
    <tr><td>Lamas de Mouro (PT)</td><td>25 Nov</td><td>07:34</td><td>17:04</td><td>17:35</td></tr>
    <tr><td>Lamas de Mouro (PT)</td><td>29 Nov</td><td>07:39</td><td>17:02</td><td>17:34</td></tr></tbody></table></div></div></div>
   <div class="cards">
-   <div class="card"><span class="k">Food</span><h3 class="h3">Supermarkets</h3><dl class="kv"><dt>Galicia</dt><dd>Lidl Carballo, Avda. Bértoa s/n. Gadis Hiper, Avda. Razo s/n.</dd><dt>Peneda</dt><dd>Intermarché Melgaço, Lugar do Galvão, 25 min from camp</dd><dt>Note</dt><dd>Spanish shops often close or open briefly on Sundays. Do the big shop on Saturday.</dd></dl>
-    <div class="btns">${drive([43.22208,-8.68502],"Lidl Carballo","Lidl Carballo")}${drive([42.10934,-8.26153],"Intermarché Melgaço","Intermarché Melgaço")}</div></div>
+   <div class="card"><span class="k">Food</span><h3 class="h3">Supermarkets</h3><dl class="kv"><dt>Galicia</dt><dd>Gadis and Dia in Baio, 7 min from camp. Eroski and Gadis in Vimianzo, 18 min (Mon–Sat 09:00–21:00). Carrefour Oca in Coristanco, 25 min, open Sunday 10:00–22:00.</dd><dt>Peneda</dt><dd>Intermarché Melgaço, Lugar do Galvão, 25 min from camp</dd><dt>Note</dt><dd>Spanish shops often close or open briefly on Sundays. Do the big shop on Saturday.</dd></dl>
+    <div class="btns">${drive([43.14996,-8.95305],"Gadis Baio Zas","Gadis Baio")}${drive([43.19572,-8.72394],"Carrefour Oca Coristanco","Carrefour Oca")}${drive([42.10934,-8.26153],"Intermarché Melgaço","Intermarché Melgaço")}</div></div>
    <div class="card"><span class="k">Check each evening</span><h3 class="h3">Forecasts and trails</h3><div class="btns">${ext("https://www.meteogalicia.gal","MeteoGalicia")}${ext("https://www.ipma.pt","IPMA")}${ext("https://patrimonionatural.xunta.gal/es/node/46","Eume route status")}${ext("https://discovermelgaco.pt/trilhos/","Melgaço trails")}</div><p style="font-size:15px;color:var(--muted)">On high fire-risk days, trails in the national park can be closed. That's unlikely in November, but it's in the rules.</p></div>
    <div class="card"><span class="k">Four dogs</span><h3 class="h3">Trail rules of thumb</h3><ul class="tight"><li>Leads on in the national park and near livestock. Cattle and working dogs roam freely around Castro Laboreiro.</li><li>Avoid swollen rivers, cliff edges and wet granite slabs.</li><li>Galician beaches: check the signs. Many don't allow dogs.</li><li>Check for ticks every evening. Towel off paws before the tent.</li></ul></div>
   </div>
