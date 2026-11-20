@@ -136,7 +136,7 @@ const DAYS=[
   notes:[],sleep:null,night:"Home · Óbidos"}
 ];
 const CHOICES=[
- ["move","Galicia base: Camping Costa da Morte (Zas)","Changed on 20 Nov from As Nevedas (Carballo) after a call with Lucia. It's about 50 km further west, by the Zas river. Borneiro is now 15 min away and Ézaro under an hour, but the Eume (1 h 40), Cecebre (1 h) and the surf beaches near A Coruña (45–60 min) are further. The days are the same, with new start and finish times."],
+ ["move","Galicia base: Camping Costa da Morte (Zas)","Changed on 20 Nov from As Nevedas (Carballo) after a call with Lucia. It's about 50 km further west, beside the Río de Lamas. Borneiro is now 15 min away and Ézaro under an hour, but the Eume (1 h 40), Cecebre (1 h) and the surf beaches near A Coruña (45–60 min) are further. The days are the same, with new start and finish times."],
  ["new","Afternoon surf, Saturday to Tuesday","One 70-minute session a day (changing plus an hour in the water): Area Maior, Sabón, Caión and Bastiagueiro. They replace the Razo surf-school slots. The app picks the best time in each window from the live tide, swell and wind."],
  ["keep","Fragas do Eume","Kept as the Galicia centrepiece on Monday, now the short Santa Cristina–Caaveiro version (4–6 km) so the afternoon is free for surf at Caión. The full 11.8 km circuit is the fallback if the surf is off."],
  ["keep","Refuxio de Verdes + Fervenza de San Paio","Kept and paired on one low-load walking day, 35–45 min from camp."],
