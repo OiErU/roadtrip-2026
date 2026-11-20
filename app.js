@@ -147,6 +147,7 @@ function dayDetail(d,opts={}){
     <div class="in"><span class="when">${d.date===T?'<i class="wm"></i>Today, ':""}${f.W} ${f.d} November · Day ${d.n} of 10</span><h2>${esc(d.title)}</h2></div></div>
   <div class="facts-row"><span class="fact ${bcls}">${baseLabel(d.base)}</span>${km?`<span class="fact">${km.toFixed(1)} km walking</span>`:""}${d.surf?'<span class="fact">Surf</span>':""}</div>`}
   <p class="lede">${esc(d.lede)}</p>
+  ${opts.hero!==false&&d.n===1?gateCard():""}
   ${opts.hero===false?"":wxCard(d)}
   <div class="drive">${IC.car}<div><b>Driving</b>${esc(d.drive)}</div></div>
   <div class="stack"><h3 class="h3">The day</h3><ul class="tl">${d.timeline.map(([t,s])=>`<li><span class="t">${esc(t)}</span><span>${esc(s)}</span></li>`).join("")}</ul></div>
@@ -407,6 +408,8 @@ function dayTiles(d){
   </div>`;
 }
 function refreshTiles(){const el=document.getElementById("tiles");if(!el)return;const d=T<START?DAYS[0]:DAYS.find(z=>z.date===T);if(d)el.outerHTML=dayTiles(d)}
+const gateCard=()=>`<div class="gate" role="region" aria-label="Campsite gate code"><span class="gate-k">${IC.pin}Camping Costa da Morte · gate code</span><b class="gate-code num">${esc(GATE.code)}</b><span class="gate-p">${esc(GATE.pitch)}</span><span class="gate-s">${esc(GATE.opens)}. ${esc(GATE.valid)}</span></div>`;
+const gateDay=t=>t>=GATE.from&&t<=GATE.to;
 function renderToday(){
   let h;
   const outlookNote=`<p class="wx-note">Live forecast from Open-Meteo where it reaches. Dashed days show what's typical for late November until the forecast covers them.</p>`;
@@ -428,7 +431,7 @@ function renderToday(){
     h=`<div class="sec-head"><h2 class="title">Welcome home</h2><p class="sub">The after-trip list keeps the gear ready for next time.</p></div>${progBlock(LISTS.find(l=>l.id==="after"),"After the trip")}
      <div class="btns"><a class="btn" href="#plan">Look back at the plan</a></div>`;
   }
-  $("#v-today").innerHTML=h;
+  $("#v-today").innerHTML=(gateDay(T)?gateCard():"")+h;
 }
 
 /* ================= Map ================= */
@@ -582,7 +585,7 @@ function renderInfo(){
    <div class="seg" role="group" aria-label="Maps app for directions"><button type="button" data-nav="google" aria-pressed="${NAV==="google"}">Google</button><button type="button" data-nav="apple" aria-pressed="${NAV==="apple"}">Apple</button><button type="button" data-nav="waze" aria-pressed="${NAV==="waze"}">Waze</button></div></div>
   <div class="stack"><h2 class="h2">Campsites</h2><div class="cards">
    <div class="card"><span class="k">20–25 Nov, 5 nights</span><h3 class="h3">Camping Costa da Morte</h3>
-    <dl class="kv"><dt>Address</dt><dd>Lugar de Andregalla 1, Lamas, 15851 Zas (A Coruña)</dd><dt>GPS</dt><dd class="num">43.11553, -8.92816</dd><dt>Contact</dt><dd>Lucia (by phone, 20 Nov). Email tudiras@campingcostadamorte.com</dd><dt>Open</dt><dd>All year. Low-season reception 14:30–18:30. Check-in from 16:00, check-out by 11:00. Quiet hours 23:00–08:00.</dd><dt>Pitch</dt><dd>Tent area of over 1,000 m² by the Zas river. Low-season tent pack €25 a night: up to 4 people, 1 tent, 1 car and electricity included.</dd><dt>Dogs</dt><dd>€5 each a night. The rate card says max 2 pets, so check that all four are OK.</dd><dt>On site</dt><dd>Hot showers, laundry, small shop, vending area with microwave and coffee machine, washing-up sinks, dog wash, Wi-Fi. Bread delivered daily. The food truck only opens in summer.</dd><dt>Nearby</dt><dd>Baio 7 min (Gadis, Dia). Vimianzo 18 min. Carballo 30 min. Santiago about 45 min.</dd></dl>
+    <dl class="kv"><dt>Address</dt><dd>Lugar de Andregalla 1, Lamas, 15851 Zas (A Coruña)</dd><dt>GPS</dt><dd class="num">43.11553, -8.92816</dd><dt>Contact</dt><dd>Lucia (by phone, 20 Nov). Email tudiras@campingcostadamorte.com</dd><dt>Your pitch</dt><dd>Pitch 8, caravan/camper area 2 (gravel). Ask whether the tent can go on the grass area instead.</dd><dt>Gate code</dt><dd><b class="num" style="font-size:22px">${esc(GATE.code)}</b></dd><dt>Access</dt><dd>The e-key link is in the booking email ("Códigos de acceso"). They open the entrance and exit sliding gates, the main pedestrian gate and river gates 1 and 2. The email only gives access from 20 Nov 16:00 to 21 Nov 11:00, so check that it gets extended.</dd><dt>Open</dt><dd>All year. Low-season reception 14:30–18:30. Check-in from 16:00, check-out by 11:00. Quiet hours 23:00–08:00.</dd><dt>Pitch</dt><dd>Tent area of over 1,000 m² by the Zas river. Low-season tent pack €25 a night: up to 4 people, 1 tent, 1 car and electricity included.</dd><dt>Dogs</dt><dd>€5 each a night. The rate card says max 2 pets, so check that all four are OK.</dd><dt>On site</dt><dd>Hot showers, laundry, small shop, vending area with microwave and coffee machine, washing-up sinks, dog wash, Wi-Fi. Bread delivered daily. The food truck only opens in summer.</dd><dt>Nearby</dt><dd>Baio 7 min (Gadis, Dia). Vimianzo 18 min. Carballo 30 min. Santiago about 45 min.</dd></dl>
     <div class="btns">${tel("+34608425750","+34 608 425 750")}${drive(COSTA.ll,COSTA.q)}${ext("https://campingcostadamorte.com","Website")}</div></div>
    <div class="card"><span class="k">25–29 Nov, 4 nights</span><h3 class="h3">Lamas de Mouro</h3>
     <dl class="kv"><dt>Address</dt><dd>Veigas de Lama, 4960-170 Lamas de Mouro, Melgaço</dd><dt>GPS</dt><dd class="num">42.03582, -8.19608</dd><dt>Altitude</dt><dd>About 900 m, so frost is likely</dd><dt>Open</dt><dd>All year. Dogs allowed, dog park on site.</dd><dt>Park gate</dt><dd>Porta de Lamas de Mouro (trails and info)</dd></dl>
