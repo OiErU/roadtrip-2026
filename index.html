@@ -217,6 +217,7 @@ details.fold[open]>summary::after{transform:rotate(-135deg);margin-top:4px}
 .hike{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:grid}
 .hike .ph{position:relative;aspect-ratio:16/10;background:var(--sunk)}
 .hike .ph img{width:100%;height:100%;object-fit:cover}
+.hike .ph:not(:has(img)){aspect-ratio:auto;min-height:56px}
 .hike .ph .flag{position:absolute;left:12px;top:12px;display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:13.5px;padding:6px 10px;border-radius:6px;background:var(--surface);color:var(--ink)}
 .hike .bd{padding:16px 16px 18px;display:grid;gap:14px}
 .hike h4{font-family:var(--f-sign);font-weight:800;font-size:29px;line-height:.98}
